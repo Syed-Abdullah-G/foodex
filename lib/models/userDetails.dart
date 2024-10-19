@@ -11,7 +11,7 @@ Userdetails({required this.name, required this.shopmobilenumber, required this.s
    Map<String, String> toJson() {
     return {
       "name":name,
-      "shopmobilenumber":shopmobilenumber,
+      "shopnumber":shopmobilenumber,
       "shopname":shopname,
       "address": address,
     };

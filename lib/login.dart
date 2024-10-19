@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:foodex/redirect.dart';
+import 'package:foodex/getDetails.dart';
 import 'package:foodex/otpscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -22,7 +22,8 @@ class _LoginPageState extends State<LoginPage> {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: "+91 $mobileNumber",
       verificationCompleted: (PhoneAuthCredential credential) async {
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> Getdetails()));
+        print("-----------------verification completed------------------------");
       },
       verificationFailed: (FirebaseAuthException e) {
         if (e.code == "invalid-phone-number") {
@@ -31,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       codeSent: (String verificationID, int? resendToken) async {
         Navigator.push(context, MaterialPageRoute(builder: (context)=> Otpscreen(vertificationId: verificationID, mobileNumber: mobileNumber,)));
+        print("-----------------pushed to OTP Screen---------------------");
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
     );

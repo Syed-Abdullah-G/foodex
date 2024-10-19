@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:foodex/homepage.dart';
 import 'package:foodex/models/userDetails.dart';
+import 'package:foodex/userpage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final db = FirebaseFirestore.instance;
@@ -144,8 +145,9 @@ const SizedBox(height: 30,),
                     borderRadius: BorderRadius.circular(12)),
                 child: Center(
                   child: TextButton(
-                    onPressed: ()  { 
-                      storeUserDetails(namecontroller.text, mobilenumbercontroller.text, shopnamecontroller.text, addresscontroller.text);
+                    onPressed: ()  async{ 
+                      await storeUserDetails(namecontroller.text, mobilenumbercontroller.text, shopnamecontroller.text, addresscontroller.text);
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileScreen()));
                     },
                     child: const Text('Sign In',
                         style: TextStyle(

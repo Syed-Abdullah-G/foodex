@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:foodex/redirect.dart';
+import 'package:foodex/getDetails.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Otpscreen extends StatefulWidget {
@@ -101,11 +101,11 @@ class _LoginPageState extends State<Otpscreen> {
                       PhoneAuthCredential credential =
                           PhoneAuthProvider.credential(
                               verificationId: widget.vertificationId, smsCode: smsCode);
+                              print("----------User successfully created------------");
 
                       try {
-                        await FirebaseAuth.instance
-                            .signInWithCredential(credential);
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Redirect(),));
+                       
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => Getdetails(),));
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
