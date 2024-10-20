@@ -22,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
 loadData() {
-  final docRef = db.collection("user").doc(FirebaseAuth.instance.currentUser!.phoneNumber);
+  final docRef = db.collection("user").doc(FirebaseAuth.instance.currentUser!.uid);
 docRef.get().then(
   (DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -55,7 +55,7 @@ docRef.get().then(
         backgroundColor: Colors.white,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(onPressed: (){
-           Navigator.push(context, MaterialPageRoute(builder: (context) => const EventDetails()));
+           Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddExpenseScreen()));
 
         },
         child: Icon(Icons.add),),

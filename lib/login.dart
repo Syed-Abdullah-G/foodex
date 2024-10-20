@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:foodex/getDetails.dart';
-import 'package:foodex/otpscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -18,32 +18,30 @@ class _LoginPageState extends State<LoginPage> {
   final _smsCodeController = TextEditingController();
 
 
-   Future authenticate(String mobileNumber) async {
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: "+91 $mobileNumber",
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> Getdetails()));
-        print("-----------------verification completed------------------------");
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        if (e.code == "invalid-phone-number") {
-          print("The provided phone number is not valid");
-        }
-      },
-      codeSent: (String verificationID, int? resendToken) async {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> Otpscreen(vertificationId: verificationID, mobileNumber: mobileNumber,)));
-        print("-----------------pushed to OTP Screen---------------------");
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
+  Future<UserCredential> signInWithGoogle() async {
+    //trigger the authentication flow 
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    //Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    //Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
     );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+
   }
+
+  
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _mobileNumberController.dispose();
-    _smsCodeController.dispose();
   }
 
   @override
@@ -103,20 +101,24 @@ class _LoginPageState extends State<LoginPage> {
             ),
 
 
-            // sign in button
+           
+
+            //add google login here
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: Colors.deepPurple,
+                    color: const Color.fromARGB(255, 164, 200, 183),
                     borderRadius: BorderRadius.circular(12)),
                 child: Center(
                   child: TextButton(
                     onPressed: () async {
-                      await authenticate(_mobileNumberController.text);
+                      await signInWithGoogle();
+                       Navigator.push(context, MaterialPageRoute(builder: (context) => const Getdetails()));
+
                     },
-                    child: const Text('Sign In',
+                    child: const Text('Google Sign In',
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -124,26 +126,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Not a member?",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  " Register Now",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
             )
           ],
         ),

@@ -12,7 +12,20 @@
           "package_name": "com.testing.foodex"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1049496760089-jcnkpedhmsi38rdt15im7vc2jrhue29q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.testing.foodex",
+            "certificate_hash": "73f8d480db17e639bcfd251dc172031e2c6fae04"
+          }
+        },
+        {
+          "client_id": "1049496760089-412k9umpuhgjmqp8f4cd1t0m57vd5abc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD7QPxNdjBVXiJcVbY0_NeX2WeK7_yCA6I"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049496760089-412k9umpuhgjmqp8f4cd1t0m57vd5abc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1049496760089-dd56tn189f4600gjh0l8ulkbquebbae1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.foodex"
+              }
+            }
+          ]
         }
       }
     }

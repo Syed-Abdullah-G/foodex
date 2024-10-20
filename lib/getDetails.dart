@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:foodex/homepage.dart';
 import 'package:foodex/models/userDetails.dart';
 import 'package:foodex/userpage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,8 +25,8 @@ class _HomeState extends State<Getdetails> {
 storeUserDetails(String name, String shopmobilenumber, String shopname, String address) async{
  final userdetails =  Userdetails(name: name, shopmobilenumber: shopmobilenumber, shopname: shopname, address: address);
  Map<String, String> userMap  = userdetails.toJson();
- await db.collection("user").doc(FirebaseAuth.instance.currentUser!.phoneNumber).set(userMap);
- Navigator.push(context, MaterialPageRoute(builder: (context) => const Homepage()));
+ await db.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).set(userMap);
+ Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
 
 }
   

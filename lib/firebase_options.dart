@@ -63,6 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1049496760089',
     projectId: 'food-f88e3',
     storageBucket: 'food-f88e3.appspot.com',
+    androidClientId: '1049496760089-jcnkpedhmsi38rdt15im7vc2jrhue29q.apps.googleusercontent.com',
+    iosClientId: '1049496760089-dd56tn189f4600gjh0l8ulkbquebbae1.apps.googleusercontent.com',
     iosBundleId: 'com.example.foodex',
   );
 
