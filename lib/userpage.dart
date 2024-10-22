@@ -55,7 +55,7 @@ docRef.get().then(
         backgroundColor: Colors.white,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(onPressed: (){
-           Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddExpenseScreen()));
+           Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddExpenseScreen(shopname: shopname, shopnumber: shopnumber, address: address,)));
 
         },
         child: Icon(Icons.add),),

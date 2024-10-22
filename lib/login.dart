@@ -14,8 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _mobileNumberController = TextEditingController();
-  final _smsCodeController = TextEditingController();
+
 
 
   Future<UserCredential> signInWithGoogle() async {
@@ -61,55 +60,22 @@ class _LoginPageState extends State<LoginPage> {
               height: 75,
             ),
 
-            Text("Hello Again !", style: GoogleFonts.bebasNeue(fontSize: 52)),
+            Text("Sign In !", style: GoogleFonts.bebasNeue(fontSize: 52)),
             const SizedBox(
               height: 10,
             ),
-            const Text(
-              "Welcome back !",
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextField(
-                    controller: _mobileNumberController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Mobie Number",
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(
-              height: 10,
-            ),
-
-
            
+            const SizedBox(
+              height: 20,
+            ),
 
             //add google login here
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
+              padding: const EdgeInsets.symmetric(horizontal: 50),
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 164, 200, 183),
+                    color: const Color.fromARGB(255, 124, 186, 157),
                     borderRadius: BorderRadius.circular(12)),
                 child: Center(
                   child: TextButton(

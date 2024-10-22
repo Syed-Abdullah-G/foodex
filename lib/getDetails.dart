@@ -27,7 +27,6 @@ storeUserDetails(String name, String shopmobilenumber, String shopname, String a
  Map<String, String> userMap  = userdetails.toJson();
  await db.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).set(userMap);
  Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
-
 }
   
 

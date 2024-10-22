@@ -1,39 +1,84 @@
+import 'dart:math';
+
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:drop_down_list/drop_down_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:foodex/models/areaModel.dart';
+import 'package:foodex/models/foodDetails.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+final db = FirebaseFirestore.instance;
+
+const _list = [
+  "Adyar", "T Nagar", "Royapettah", "Anna Nagar", "Guindy", "Thousand Lights"
+];
+
 class AddExpenseScreen extends StatefulWidget {
+  AddExpenseScreen({
+    required this.shopname,
+    required this.shopnumber,
+    required this.address,
+  });
+
+  String shopname;
+  String shopnumber;
+  String address;
   @override
   _AddExpenseScreenState createState() => _AddExpenseScreenState();
 }
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? selectedExpenseType;
   DateTime selectedDate = DateTime.now();
-  final vendorController = TextEditingController();
-  final amountController = TextEditingController();
+  final descriptionController = TextEditingController();
   File? _imageFile;
+  List<XFile> _selectedImages = [];
   String? _imageName;
+  String? selectedArea;
 
-  List<String> expenseTypes = [
-    'Airfare',
-    'Accommodation',
-    'Meals',
-    'Transport',
-    'Others',
-  ];
+  Future<void> _showImagePickerOptions() async {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Wrap(
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera),
+                title: Text("Take a Photo"),
+                onTap: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? images =
+                      await picker.pickImage(source: ImageSource.camera);
 
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    
-    if (image != null) {
-      setState(() {
-        _imageFile = File(image.path);
-        _imageName = image.name;
-      });
-    }
+                  if (images != null) {
+                    setState(() {
+                      _selectedImages.add(images);
+                    });
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text("Choose from Gallery"),
+                onTap: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? images =
+                      await picker.pickImage(source: ImageSource.gallery);
+                  if (images != null) {
+                    setState(() {
+                      _selectedImages.add(images);
+                    });
+                  }
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -67,9 +112,26 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
-            
               SizedBox(height: 16),
+              Text(
+                'Area*',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
+              ),
+              CustomDropdown.search(
+                  items: _list,
+                  hintText: "Select Area*",
+                  excludeSelected: false,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedArea = value;
+                    });
+                  }),
+              SizedBox(
+                height: 8,
+              ),
               Text(
                 'Date of Produce*',
                 style: TextStyle(
@@ -98,12 +160,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   ),
                 ),
               ),
-              
-             
-             
               SizedBox(height: 16),
               Text(
-                'Items*',
+                'Item Description*',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.black87,
@@ -111,20 +170,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               SizedBox(height: 8),
               TextFormField(
-                controller: amountController,
-                keyboardType: TextInputType.number,
+                maxLines: null,
+                controller: descriptionController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[200],
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter amount';
-                  }
-                  return null;
-                },
               ),
               SizedBox(height: 16),
               Text(
@@ -134,9 +188,47 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   color: Colors.black87,
                 ),
               ),
+              _selectedImages.isNotEmpty
+                  ? Wrap(
+                      spacing: 8,
+                      children: _selectedImages
+                          .map(
+                            (image) => Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    File(image.path),
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 5,
+                                  right: 5,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedImages.remove(image);
+                                      });
+                                    },
+                                    child: Icon(
+                                      Icons.close,
+                                      color: Colors.red,
+                                      size: 30,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                          .toList(),
+                    )
+                  : SizedBox(),
               SizedBox(height: 8),
               GestureDetector(
-                onTap: _pickImage,
+                onTap: _showImagePickerOptions,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
@@ -147,7 +239,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          _imageName ?? 'Select an image',
+                          'Choose Image/ Take Photo',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -160,9 +252,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      // Handle form submission
+                      final foodDetail = FoodDetails(
+                          shopname: widget.shopname,
+                          shopaddress: widget.address,
+                          shopnumber: widget.shopnumber,
+                          dateofproduce:
+                              selectedDate.toLocal().toString().split(' ')[0],
+                          itemDescription: descriptionController.text,
+                          area: selectedArea!);
+                      Map<String, String> foodMap = foodDetail.toJson();
+                    print(selectedArea);
+                      await db
+                          .collection("area")
+                          .doc(selectedArea!)
+                          .set(foodMap);
                     }
                   },
                   style: ElevatedButton.styleFrom(
