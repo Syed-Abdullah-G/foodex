@@ -81,7 +81,7 @@ class _GetfoodPageState extends State<Getfood> {
                 padding: const EdgeInsets.all(16),
                 itemCount: restaurants.length,
                 itemBuilder: (BuildContext context , index) {
-                  return ProductImageWidget(
+                  return SquareImageCard(
                     imageUrl: restaurants[index]["imageUrls"][0],
                     shopName: restaurants[index]["shopname"],
                     price: 80,
@@ -97,18 +97,16 @@ class _GetfoodPageState extends State<Getfood> {
     );
   }
 }
-
-
-class ProductImageWidget extends StatelessWidget {
+ class SquareImageCard extends StatelessWidget {
+  final String imageUrl;
   final String shopName;
   final double price;
-  final String imageUrl;
 
-  const ProductImageWidget({
+  const SquareImageCard({
     Key? key,
+    required this.imageUrl,
     required this.shopName,
     required this.price,
-    required this.imageUrl,
   }) : super(key: key);
 
   @override
@@ -134,24 +132,24 @@ class ProductImageWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: Image.network(
-                imageUrl,
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 150,
-                    color: Colors.grey[200],
-                    child: const Icon(
-                      Icons.error_outline,
-                      color: Colors.grey,
-                      size: 50,
-                    ),
-                  );
-                },
+            AspectRatio(
+              aspectRatio: 1, // Ensures square aspect ratio
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[200],
+                      child: const Icon(
+                        Icons.error_outline,
+                        color: Colors.grey,
+                        size: 50,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             Padding(
