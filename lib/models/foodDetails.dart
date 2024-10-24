@@ -1,6 +1,6 @@
 class FoodDetails {
 
-FoodDetails({required this.shopname, required this.shopaddress, required this.shopnumber, required this.dateofproduce, required this.itemDescription,required this.area});
+FoodDetails({required this.shopname, required this.shopaddress, required this.shopnumber, required this.dateofproduce, required this.itemDescription,required this.area, required this.imageUrls});
 
    String shopname;
    String shopaddress;
@@ -8,17 +8,18 @@ FoodDetails({required this.shopname, required this.shopaddress, required this.sh
    String dateofproduce;
    String itemDescription;
    String area;
+   List imageUrls;
 
 
 
-   Map<String, String> toJson() {
+   Map<String, dynamic> toJson() {
     return {
       "shopname":shopname,
       "shopaddress":shopaddress,
       "shopmobile":shopnumber,
       "dateofproduce": dateofproduce,
       "itemDescription":itemDescription,
-
+      "imageUrls": imageUrls
     };
    }
 

@@ -4,6 +4,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:foodex/models/areaModel.dart';
 import 'package:foodex/models/foodDetails.dart';
@@ -11,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 final db = FirebaseFirestore.instance;
+final storage = FirebaseStorage.instance.ref();
 
 const _list = [
   "Adyar", "T Nagar", "Royapettah", "Anna Nagar", "Guindy", "Thousand Lights"
@@ -36,6 +38,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final descriptionController = TextEditingController();
   File? _imageFile;
   List<XFile> _selectedImages = [];
+    List<String> imageUrls = [];
   String? _imageName;
   String? selectedArea;
 
@@ -94,6 +97,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +257,24 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
+                    print("Process started");
+                    imageUrls = [];
+                    
                     if (_formKey.currentState!.validate()) {
+                          for (XFile item in _selectedImages){
+                          final reference = storage.child(selectedArea!).child("${widget.shopname}/${item.path}.png");
+                            await reference.putFile(File(item.path));
+                          final imageDownloadUrl =await storage.child(selectedArea!).child("${widget.shopname}/${item.path}.png").getDownloadURL();
+                          imageUrls.add(imageDownloadUrl);
+                    print("download urls updated");
+                          }
+
+
+
+
+
+
+
                       final foodDetail = FoodDetails(
                           shopname: widget.shopname,
                           shopaddress: widget.address,
@@ -261,14 +282,17 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           dateofproduce:
                               selectedDate.toLocal().toString().split(' ')[0],
                           itemDescription: descriptionController.text,
-                          area: selectedArea!);
-                      Map<String, String> foodMap = foodDetail.toJson();
-                    print(selectedArea);
+                          area: selectedArea!, imageUrls: imageUrls);
+                      Map<String, dynamic> foodMap = foodDetail.toJson();
+          
+                    print("created mapping for food");
                       await db
                           .collection("area")
-                          .doc(selectedArea!)
+                          .doc(selectedArea!).collection(widget.shopname).doc("food_items")
                           .set(foodMap);
                     }
+                    print("completed .........");
+                    Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black87,
