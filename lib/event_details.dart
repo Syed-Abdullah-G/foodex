@@ -287,8 +287,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           
                     print("created mapping for food");
                       await db
-                          .collection("area")
-                          .doc(selectedArea!).collection(widget.shopname).doc("food_items")
+                          .collection(selectedArea!)
+                          .doc(widget.shopname)
                           .set(foodMap);
                     }
                     print("completed .........");

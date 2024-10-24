@@ -1,7 +1,5 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 const _list = [
@@ -14,70 +12,174 @@ const _list = [
 ];
 final db = FirebaseFirestore.instance;
 
+
+
 class Getfood extends StatefulWidget {
-  const Getfood({super.key});
+   Getfood({Key? key}) : super(key: key);
 
   @override
-  State<Getfood> createState() => _GetfoodState();
+  State<Getfood> createState() => _GetfoodPageState();
 }
 
-class _GetfoodState extends State<Getfood> {
-  String? selectedArea;
+class _GetfoodPageState extends State<Getfood> {
+    String? selectedArea;
+
   String shopnumber = "";
+
   String shopname = "";
+
   String address = "";
+
   String itemDescription = "";
+
   String dateofproduce = "";
 
-  List restaurants= [];
+  String imageUrl = "";
 
-  loadData(String area) async {
-    final docRef =
-        db.collection("area").doc(area);
-    docRef.get().then(
-      (DocumentSnapshot doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        setState(() {
-          shopnumber = data["shopmobile"];
-          shopname = data["shopname"];
-          address = data["shopaddress"];
-          itemDescription = data["itemDescription"];
-           dateofproduce = data["dateofproduce"];
-          
-        });
-        // ...
-      },
-      onError: (e) => print("Error getting document: $e"),
-    );
+   List restaurants = [];
+
+   loadData(String area) async {
+    print("function started");
+    restaurants.clear();
+    final docRef = await db.collection(area).get().then((querySnapshot) {
+      for (var docSnapshot in querySnapshot.docs) {
+        restaurants.add(docSnapshot.data());
+        print(docSnapshot.data());
+        
+      }
+    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
           children: [
-            SizedBox(height: 10,),
-            CustomDropdown.search(
+            // Search Bar
+            Container(
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[800],
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: CustomDropdown.search(
                 items: _list,
                 hintText: "Select Area*",
                 excludeSelected: false,
-                onChanged: (value) {
-                  setState(() {
-                    loadData(value!);
-                  });
-                }), restaurants.isNotEmpty?
-            SingleChildScrollView(
-              child: ListView.builder(itemCount: restaurants.length,
-                itemBuilder: (BuildContext context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.restaurant),
-                    title: Text(restaurants[index]),
+                onChanged: (value) async {
+                  await loadData(value!);
+                }),
+            ),
+            
+            // Grid of Places
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,
+                mainAxisSpacing: 16,crossAxisSpacing: 16),
+                padding: const EdgeInsets.all(16),
+                itemCount: restaurants.length,
+                itemBuilder: (BuildContext context , index) {
+                  return ProductImageWidget(
+                    imageUrl: restaurants[index]["imageUrls"][0],
+                    shopName: restaurants[index]["shopname"],
+                    price: 80,
                   );
+                },
+              
+              ),
+            ),
       
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class ProductImageWidget extends StatelessWidget {
+  final String shopName;
+  final double price;
+  final String imageUrl;
+
+  const ProductImageWidget({
+    Key? key,
+    required this.shopName,
+    required this.price,
+    required this.imageUrl,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 200,
+      height: 250,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              child: Image.network(
+                imageUrl,
+                height: 150,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 150,
+                    color: Colors.grey[200],
+                    child: const Icon(
+                      Icons.error_outline,
+                      color: Colors.grey,
+                      size: 50,
+                    ),
+                  );
                 },
               ),
-            ): Container(child: Text("Select an area to display the food items nearby"),),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    shopName,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '\$${price.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.green,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
