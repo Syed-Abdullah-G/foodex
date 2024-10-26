@@ -30,10 +30,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         setState(() {
-          name = data["name"];
-          shopnumber = data["shopnumber"];
-          shopname = data["shopname"];
-          address = data["address"];
+          name = data["name"] ?? "";
+          shopnumber = data["shopnumber"] ?? "";
+          shopname = data["shopname"] ?? "";
+          address = data["address"] ?? "";
         });
         // ...
       },

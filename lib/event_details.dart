@@ -41,6 +41,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     List<String> imageUrls = [];
   String? _imageName;
   String? selectedArea;
+  double price = 0;
 
   Future<void> _showImagePickerOptions() async {
     showModalBottomSheet(
@@ -185,6 +186,31 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 ),
               ),
               SizedBox(height: 16),
+
+              Text("Price*", style: TextStyle(
+                fontSize: 14, color: Colors.black87,
+              ),),
+              SizedBox(height: 8,),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+                ),validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please enter a price";
+                  } 
+                  return null;
+                },onChanged: (value) {
+            setState(() {
+              price = double.parse(value);
+            });
+                },
+              ),
+              SizedBox(height: 16,),
+              
               Text(
                 'File attachment*',
                 style: TextStyle(
@@ -270,11 +296,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           }
 
 
-
-
-
-
-
                       final foodDetail = FoodDetails(
                           shopname: widget.shopname,
                           shopaddress: widget.address,
@@ -282,14 +303,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           dateofproduce:
                               selectedDate.toLocal().toString().split(' ')[0],
                           itemDescription: descriptionController.text,
-                          area: selectedArea!, imageUrls: imageUrls);
+                          area: selectedArea!, imageUrls: imageUrls, price: price);
                       Map<String, dynamic> foodMap = foodDetail.toJson();
           
                     print("created mapping for food");
                       await db
                           .collection(selectedArea!)
-                          .doc(widget.shopname)
-                          .set(foodMap);
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .set({"fooditems": FieldValue.arrayUnion([foodMap])},SetOptions(merge: true));
                     }
                     print("completed .........");
                     Navigator.pop(context);

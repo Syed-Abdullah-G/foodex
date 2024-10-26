@@ -1,6 +1,16 @@
 class FoodDetails {
 
-FoodDetails({required this.shopname, required this.shopaddress, required this.shopnumber, required this.dateofproduce, required this.itemDescription,required this.area, required this.imageUrls});
+  FoodDetails({
+    required this.shopname,
+    required this.shopaddress,
+    required this.shopnumber,
+    required this.dateofproduce,
+    required this.itemDescription,
+    required this.area,
+    required this.imageUrls,
+    required this.price
+  });
+
 
    String shopname;
    String shopaddress;
@@ -9,6 +19,7 @@ FoodDetails({required this.shopname, required this.shopaddress, required this.sh
    String itemDescription;
    String area;
    List imageUrls;
+   double price;
 
 
 
@@ -19,7 +30,8 @@ FoodDetails({required this.shopname, required this.shopaddress, required this.sh
       "shopmobile":shopnumber,
       "dateofproduce": dateofproduce,
       "itemDescription":itemDescription,
-      "imageUrls": imageUrls
+      "imageUrls": imageUrls,
+      "price": price
     };
    }
 
