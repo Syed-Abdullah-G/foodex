@@ -113,11 +113,14 @@ class _FooddescriptionState extends State<Fooddescription> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          widget.shopName,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                            widget.shopName,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         Text(
@@ -135,14 +138,14 @@ class _FooddescriptionState extends State<Fooddescription> {
                     // Shop address with icon
                     Row(
                       children: [
-                        Icon(Icons.location_on, color: Colors.grey, size: 16),
+                        Icon(Icons.location_on, color: Colors.grey, size: 28),
                         SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             '${widget.shopAddress}, ${widget.area}',
                             style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 14,
+                              fontSize: 20,
                             ),
                           ),
                         ),
@@ -153,13 +156,13 @@ class _FooddescriptionState extends State<Fooddescription> {
                     // Shop number with icon
                     Row(
                       children: [
-                        Icon(Icons.store, color: Colors.grey, size: 16),
+                        Icon(Icons.store, color: Colors.grey, size: 28),
                         SizedBox(width: 4),
                         Text(
                           'Shop ${widget.shopNumber}',
                           style: TextStyle(
                             color: Colors.grey,
-                            fontSize: 14,
+                            fontSize: 20,
                           ),
                         ),
                       ],
@@ -170,7 +173,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                     Text(
                       'Description',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 25,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -183,7 +186,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                           widget.itemDescription,
                           style: TextStyle(
                             color: Colors.grey[700],
-                            height: 1.5,
+                            height: 1.5,fontSize: 20
                           ),
                         ),
                       ),

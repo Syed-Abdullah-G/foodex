@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavyBar(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           selectedIndex: _currentIndex,
           onItemSelected: (index) {
             setState(() => _currentIndex = index);
@@ -88,8 +88,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           items: <BottomNavyBarItem>[
             BottomNavyBarItem(
-                title: Text('Create Event'), icon: Icon(Icons.home)),
-            BottomNavyBarItem(title: Text('Food'), icon: Icon(Icons.food_bank)),
+                title: Text('Create Event',style: TextStyle(color: Colors.black),), icon: Icon(Icons.home, color: const Color.fromARGB(248, 213, 108, 108),)),
+            BottomNavyBarItem(title: Text('Food',style: TextStyle(color: Colors.black),), icon: Icon(Icons.food_bank,color: const Color.fromARGB(248, 213, 108, 108),)),
           ]),
     ));
   }

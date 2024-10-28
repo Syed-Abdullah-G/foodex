@@ -34,6 +34,7 @@ class AddExpenseScreen extends StatefulWidget {
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
+
   DateTime selectedDate = DateTime.now();
   final descriptionController = TextEditingController();
   File? _imageFile;
@@ -42,6 +43,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   String? _imageName;
   String? selectedArea;
   double price = 0;
+  bool _isloading = false;
 
   Future<void> _showImagePickerOptions() async {
     showModalBottomSheet(
@@ -105,7 +107,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(),
-        title: Text('Add new expense'),
+        title: Text('Add new event'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -283,8 +285,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    print("Process started");
-                    imageUrls = [];
+                    setState(() {
+                      _isloading = !_isloading;
+                    });
+                      imageUrls = [];
                     
                     if (_formKey.currentState!.validate()) {
                           for (XFile item in _selectedImages){
@@ -322,7 +326,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: Text(
+                  child:  _isloading ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(),
+                          ):  Text(
                     'Submit',
                     style: TextStyle(
                       color: Colors.white,

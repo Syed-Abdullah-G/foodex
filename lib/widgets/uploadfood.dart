@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodex/event_details.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Uploadfood extends StatefulWidget {
    Uploadfood({super.key, required this.shopname, required this.address, required this.shopnumber, required this.name});
@@ -18,7 +19,7 @@ class Uploadfood extends StatefulWidget {
 class _UploadfoodState extends State<Uploadfood> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(floatingActionButton: FloatingActionButton(
+    return Scaffold(floatingActionButton: FloatingActionButton(backgroundColor: const Color.fromARGB(248, 213, 108, 108),
         onPressed: () {
           Navigator.push(
               context,
@@ -29,7 +30,7 @@ class _UploadfoodState extends State<Uploadfood> {
                         address: widget.address,
                       )));
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.fastfood_outlined,color: Colors.white,),
       ),      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
       body

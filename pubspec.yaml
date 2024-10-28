@@ -77,6 +77,8 @@ flutter:
   - assets/loaderIcon/7451012.png
   - assets/userPhoto/biryani.png
   - assets/userPhoto/burger.png
+  - assets/userPhoto/logo.png
+  - assets/userPhoto/google_logo.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

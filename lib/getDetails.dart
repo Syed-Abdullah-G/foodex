@@ -107,7 +107,7 @@ class _HomeState extends State<Getdetails> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
+                            backgroundColor: const Color.fromARGB(205, 234, 51, 34),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
