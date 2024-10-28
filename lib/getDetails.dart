@@ -22,101 +22,146 @@ class _HomeState extends State<Getdetails> {
   final addresscontroller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  storeUserDetails(String name, String shopmobilenumber, String shopname, String address) async {
-    final userdetails = Userdetails(name: name, shopmobilenumber: shopmobilenumber, shopname: shopname, address: address);
+  storeUserDetails(String name, String shopmobilenumber, String shopname,
+      String address) async {
+    final userdetails = Userdetails(
+        name: name,
+        shopmobilenumber: shopmobilenumber,
+        shopname: shopname,
+        address: address);
     Map<String, String> userMap = userdetails.toJson();
-    await db.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).set(userMap);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+    await db
+        .collection("user")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set(userMap);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       body: SafeArea(
-          child: Center(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("ENTER DETAILS", style: GoogleFonts.bebasNeue(fontSize: 52)),
-              const SizedBox(
-                height: 40,
-              ),
-
-              _buildTextField(namecontroller, "Name", "Please enter your name"),
-
-              const SizedBox(
-                height: 10,
-              ),
-              _buildTextField(mobilenumbercontroller, "Shop Mobile Number", "Please enter a mobile number"),
-
-              const SizedBox(
-                height: 10,
-              ),
-              _buildTextField(shopnamecontroller, "Shop Name", "Please enter the shop name"),
-              const SizedBox(
-                height: 10,
-              ),
-              _buildTextField(addresscontroller, "Address", "Please enter the address"),
-
-              const SizedBox(
-                height: 30,
-              ),
-
-              // sign in button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(color: Colors.deepPurple, borderRadius: BorderRadius.circular(12)),
-                  child: Center(
-                    child: TextButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          await storeUserDetails(namecontroller.text, mobilenumbercontroller.text, shopnamecontroller.text, addresscontroller.text);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
-                        }
-                      },
-                      child: const Text('Sign In', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          'Enter Details',
+                          style: GoogleFonts.bebasNeue(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 32),
+                        _buildStyledTextField(
+                          namecontroller,
+                          'Enter your name',
+                          'Please enter your name',
+                        ),
+                        const SizedBox(height: 16),
+                        _buildStyledTextField(
+                          mobilenumbercontroller,
+                          'Enter shop mobile number',
+                          'Please enter a mobile number',
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildStyledTextField(
+                          shopnamecontroller,
+                          'Enter shop name',
+                          'Please enter the shop name',
+                        ),
+                        const SizedBox(height: 16),
+                        _buildStyledTextField(
+                          addresscontroller,
+                          'Enter address',
+                          'Please enter the address',
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 32),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              await storeUserDetails(
+                                namecontroller.text,
+                                mobilenumbercontroller.text,
+                                shopnamecontroller.text,
+                                addresscontroller.text,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Submit',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-      )),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String hintText, String errorMessage) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          border: Border.all(color: Colors.white),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: TextFormField(
-            controller: controller,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: hintText,
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return errorMessage;
-              }
-              return null;
-            },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStyledTextField(
+    TextEditingController controller,
+    String hintText,
+    String errorMessage, {
+    TextInputType? keyboardType,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: Colors.grey[100],
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return errorMessage;
+        }
+        return null;
+      },
     );
   }
 }
