@@ -9,7 +9,7 @@ import 'package:foodex/widgets/uploadfood.dart';
 final db = FirebaseFirestore.instance;
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -88,8 +88,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           items: <BottomNavyBarItem>[
             BottomNavyBarItem(
-                title: Text('Create Event',style: TextStyle(color: Colors.black),), icon: Icon(Icons.home, color: const Color.fromARGB(248, 213, 108, 108),)),
-            BottomNavyBarItem(title: Text('Food',style: TextStyle(color: Colors.black),), icon: Icon(Icons.food_bank,color: const Color.fromARGB(248, 213, 108, 108),)),
+                title: const Text('Create Event',style: TextStyle(color: Colors.black),), icon: const Icon(Icons.home, color: Color.fromARGB(248, 213, 108, 108),)),
+            BottomNavyBarItem(title: const Text('Food',style: TextStyle(color: Colors.black),), icon: const Icon(Icons.food_bank,color: Color.fromARGB(248, 213, 108, 108),)),
           ]),
     ));
   }

@@ -49,6 +49,8 @@ dependencies:
   carousel_slider: ^5.0.0
   overlay_loader_with_app_icon: ^0.0.4
   flutter_launcher_icons: ^0.14.1
+  http: ^1.2.2
+  shimmer: ^3.0.0
 
 
 flutter_launcher_icons:

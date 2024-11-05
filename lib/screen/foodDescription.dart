@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class Fooddescription extends StatefulWidget {
-  Fooddescription({
+  Fooddescription({super.key, 
     required this.area,
     required this.shopNumber,
     required this.shopName,
@@ -66,7 +66,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                   child: CircleAvatar(
                     backgroundColor: Colors.black.withOpacity(0.5),
                     child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
@@ -82,7 +82,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                       return Container(
                         width: 8.0,
                         height: 8.0,
-                        margin: EdgeInsets.symmetric(horizontal: 4.0),
+                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: _currentImageIndex == entry.key
@@ -98,8 +98,8 @@ class _FooddescriptionState extends State<Fooddescription> {
 
             Expanded(
               child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
@@ -117,7 +117,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                           child: Text(maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                             widget.shopName,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -125,7 +125,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                         ),
                         Text(
                           '₹${widget.price}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.deepOrange,
@@ -133,17 +133,17 @@ class _FooddescriptionState extends State<Fooddescription> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     // Shop address with icon
                     Row(
                       children: [
-                        Icon(Icons.location_on, color: Colors.grey, size: 28),
-                        SizedBox(width: 4),
+                        const Icon(Icons.location_on, color: Colors.grey, size: 28),
+                        const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             '${widget.shopAddress}, ${widget.area}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 20,
                             ),
@@ -151,33 +151,33 @@ class _FooddescriptionState extends State<Fooddescription> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
 
                     // Shop number with icon
                     Row(
                       children: [
-                        Icon(Icons.store, color: Colors.grey, size: 28),
-                        SizedBox(width: 4),
+                        const Icon(Icons.store, color: Colors.grey, size: 28),
+                        const SizedBox(width: 4),
                         Text(
                           'Shop ${widget.shopNumber}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 20,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
                     // Description title
-                    Text(
+                    const Text(
                       'Description',
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     // Description text
                     Expanded(
@@ -193,8 +193,8 @@ class _FooddescriptionState extends State<Fooddescription> {
                     ),
 
                     // Order Now button
-                    SizedBox(height: 16),
-                    Container(
+                    const SizedBox(height: 16),
+                    SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
@@ -207,7 +207,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                             borderRadius: BorderRadius.circular(25),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Order Now',
                           style: TextStyle(
                             fontSize: 18,

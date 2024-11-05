@@ -30,7 +30,7 @@ class _UploadfoodState extends State<Uploadfood> {
                         address: widget.address,
                       )));
         },
-        child: Icon(Icons.fastfood_outlined,color: Colors.white,),
+        child: const Icon(Icons.fastfood_outlined,color: Colors.white,),
       ),      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
       body
@@ -38,13 +38,13 @@ class _UploadfoodState extends State<Uploadfood> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
+                const Row(
       
                 ),
                 Container(
                   width: 120,
                   height: 120,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       image: AssetImage('assets/userPhoto/A2B.jpg'), // Add your image path
@@ -55,7 +55,7 @@ class _UploadfoodState extends State<Uploadfood> {
                 const SizedBox(height: 20),
                  Text(
                 widget.shopname,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),textAlign: TextAlign.center,
@@ -63,7 +63,7 @@ class _UploadfoodState extends State<Uploadfood> {
                 const SizedBox(height: 8),
                  Text(
                   widget.address,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
                   ),
@@ -71,7 +71,7 @@ class _UploadfoodState extends State<Uploadfood> {
                 const SizedBox(height: 8),
                  Text(
                   widget.shopnumber,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
                   ),
@@ -79,7 +79,7 @@ class _UploadfoodState extends State<Uploadfood> {
                 const SizedBox(height: 8),
                  Text(
                   widget.name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
                   ),

@@ -14,12 +14,176 @@ import 'dart:io';
 final db = FirebaseFirestore.instance;
 final storage = FirebaseStorage.instance.ref();
 
-const _list = [
-  "Adyar", "T Nagar", "Royapettah", "Anna Nagar", "Guindy", "Thousand Lights"
+List<String> _list = [
+"Adambakkam",
+"Adyar",
+"Alandur",
+"Alapakkam",
+"Alwarpet",
+"Alwarthirunagar",
+"Ambattur",
+"Aminjikarai",
+"Anna Nagar",
+"Annanur",
+"Arumbakkam",
+"Ashok Nagar",
+"Avadi",
+"Ayanavaram",
+"Beemannapettai",
+"Besant Nagar",
+"Basin Bridge",
+"Chepauk",
+"Chetput",
+"Chintadripet",
+"Chitlapakkam",
+"Choolai",
+"Choolaimedu",
+"Chrompet",
+"Egmore",
+"Ekkaduthangal",
+"Eranavur",
+"Ennore",
+"Foreshore Estate",
+"Fort St. George",
+"George Town",
+"Gopalapuram",
+"Government Estate",
+"Guindy",
+"Guduvancheri",
+"IIT Madras",
+"Injambakkam",
+"ICF",
+"Iyyapanthangal",
+"Jafferkhanpet",
+"Kadambathur",
+"Karapakkam",
+"Kattivakkam",
+"Kattupakkam",
+"Kazhipattur",
+"K.K. Nagar",
+"Keelkattalai",
+"Kattivakkam",
+"Kilpauk",
+"Kodambakkam",
+"Kodungaiyur",
+"Kolathur",
+"Korattur",
+"Korukkupet",
+"Kottivakkam",
+"Kotturpuram",
+"Kottur",
+"Kovur",
+"Koyambedu",
+"Kundrathur",
+"Madhavaram",
+"Madhavaram Milk Colony",
+"Madipakkam",
+"Madambakkam",
+"Maduravoyal",
+"Manali",
+"Manali New Town",
+"Manapakkam",
+"Mandaveli",
+"Mangadu",
+"Mannady",
+"Mathur",
+"Medavakkam",
+"Meenambakkam",
+"MGR Nagar",
+"Minjur",
+"Mogappair",
+"MKB Nagar",
+"Mount Road",
+"Moolakadai",
+"Moulivakkam",
+"Mugalivakkam",
+"Mudichur",
+"Mylapore",
+"Nandanam",
+"Nanganallur",
+"Nanmangalam",
+"Neelankarai",
+"Nemilichery",
+"Nesapakkam",
+"Nolambur",
+"Noombal",
+"Nungambakkam",
+"Otteri",
+"Padi",
+"Pakkam",
+"Palavakkam",
+"Pallavaram",
+"Pallikaranai",
+"Pammal",
+"Park Town",
+"Parry's Corner",
+"Pattabiram",
+"Pattaravakkam",
+"Pazhavanthangal",
+"Peerkankaranai",
+"Perambur",
+"Peravallur",
+"Perumbakkam",
+"Perungalathur",
+"Perungudi",
+"Pozhichalur",
+"Poonamallee",
+"Porur",
+"Pudupet",
+"Pulianthope",
+"Purasaiwalkam",
+"Puthagaram",
+"Puzhal",
+"Puzhuthivakkam/ Ullagaram",
+"Raj Bhavan",
+"Ramavaram",
+"Red Hills",
+"Royapettah",
+"Royapuram",
+"Saidapet",
+"Saligramam",
+"Santhome",
+"Sembakkam",
+"Selaiyur",
+"Shenoy Nagar",
+"Sholavaram",
+"Sholinganallur",
+"Sikkarayapuram",
+"Sowcarpet",
+"St.Thomas Mount",
+"Surapet",
+"Tambaram",
+"Teynampet",
+"Tharamani",
+"T. Nagar",
+"Thirumangalam",
+"Thirumullaivoyal",
+"Thiruninravur",
+"Thiruvanmiyur",
+"Thiruvallur",
+"Tiruverkadu",
+"Thiruvotriyur",
+"Thuraipakkam",
+"Tirusulam",
+"Tiruvallikeni",
+"Tondiarpet",
+"United India Colony",
+"Vandalur",
+"Vadapalani",
+"Valasaravakkam",
+"Vallalar Nagar",
+"Vanagaram",
+"Velachery",
+"Velappanchavadi",
+"Villivakkam",
+"Virugambakkam",
+"Vyasarpadi",
+"Washermanpet",
+"West Mambalam",
 ];
 
 class AddExpenseScreen extends StatefulWidget {
-  AddExpenseScreen({
+  AddExpenseScreen({super.key, 
     required this.shopname,
     required this.shopnumber,
     required this.address,
@@ -38,7 +202,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   DateTime selectedDate = DateTime.now();
   final descriptionController = TextEditingController();
   File? _imageFile;
-  List<XFile> _selectedImages = [];
+  final List<XFile> _selectedImages = [];
     List<String> imageUrls = [];
   String? _imageName;
   String? selectedArea;
@@ -52,8 +216,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           return Wrap(
             children: [
               ListTile(
-                leading: Icon(Icons.camera),
-                title: Text("Take a Photo"),
+                leading: const Icon(Icons.camera),
+                title: const Text("Take a Photo"),
                 onTap: () async {
                   final ImagePicker picker = ImagePicker();
                   final XFile? images =
@@ -68,8 +232,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text("Choose from Gallery"),
+                leading: const Icon(Icons.photo_library),
+                title: const Text("Choose from Gallery"),
                 onTap: () async {
                   final ImagePicker picker = ImagePicker();
                   final XFile? images =
@@ -106,21 +270,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(),
-        title: Text('Add new event'),
+        leading: const BackButton(),
+        title: const Text('Add new event'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'Area*',
                 style: TextStyle(
                   fontSize: 14,
@@ -136,46 +300,46 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       selectedArea = value;
                     });
                   }),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
-              Text(
+              const Text(
                 'Date of Produce*',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               GestureDetector(
                 onTap: () => _selectDate(context),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.calendar_today, size: 20),
-                      SizedBox(width: 8),
+                      const Icon(Icons.calendar_today, size: 20),
+                      const SizedBox(width: 8),
                       Text(
                         '${selectedDate.toLocal()}'.split(' ')[0],
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'Item Description*',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextFormField(
                 maxLines: null,
                 controller: descriptionController,
@@ -184,22 +348,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   fillColor: Colors.grey[200],
                   border: InputBorder.none,
                   contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-              Text("Price*", style: TextStyle(
+              const Text("Price*", style: TextStyle(
                 fontSize: 14, color: Colors.black87,
               ),),
-              SizedBox(height: 8,),
+              const SizedBox(height: 8,),
               TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[200],
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
                 ),validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Please enter a price";
@@ -211,9 +375,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             });
                 },
               ),
-              SizedBox(height: 16,),
+              const SizedBox(height: 16,),
               
-              Text(
+              const Text(
                 'File attachment*',
                 style: TextStyle(
                   fontSize: 14,
@@ -245,7 +409,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                         _selectedImages.remove(image);
                                       });
                                     },
-                                    child: Icon(
+                                    child: const Icon(
                                       Icons.close,
                                       color: Colors.red,
                                       size: 30,
@@ -257,17 +421,17 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           )
                           .toList(),
                     )
-                  : SizedBox(),
-              SizedBox(height: 8),
+                  : const SizedBox(),
+              const SizedBox(height: 8),
               GestureDetector(
                 onTap: _showImagePickerOptions,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
                       Expanded(
                         child: Text(
@@ -280,7 +444,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -321,16 +485,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black87,
-                    padding: EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child:  _isloading ? SizedBox(
+                  child:  _isloading ? const SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(),
-                          ):  Text(
+                          ):  const Text(
                     'Submit',
                     style: TextStyle(
                       color: Colors.white,

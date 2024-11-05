@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -74,11 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 100),
                   child: ClipRRect(
-                    child: Image.asset("assets/userPhoto/logo.png"),
                     borderRadius: BorderRadius.circular(30),
+                    child: Image.asset("assets/userPhoto/logo.png"),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 75,
                 ),
                 Text(
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(fontSize: 50),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
                 Padding(
@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      side: BorderSide(color: Colors.grey),
+                      side: const BorderSide(color: Colors.grey),
                       elevation: 1,
                     ),
                     child: _isLoading
