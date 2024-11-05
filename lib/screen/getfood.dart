@@ -185,7 +185,7 @@ class _GetfoodPageState extends State<Getfood> {
   List restaurants = [];
   bool _loading = true;
 
-  loadData(String area) async {
+  Future loadData(String area) async {
     print("function started");
     setState(() {
   selectedArea = area;
