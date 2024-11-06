@@ -82,12 +82,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 75,
                 ),
                 Text(
-                  "Welcome to Foodex",
+                  "Login",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(fontSize: 50),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 30,
+                ),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: "Email",
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -131,14 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
             Positioned(bottom: -200, left: 15, child: Image.asset("assets/userPhoto/biryani.png")),
-            // Positioned(
-            //   bottom: -60,
-            //   left: -90,
-            //   child: Image.asset(
-            //     "assets/userPhoto/burger.png",
-            //     height: 250,
-            //   ),
-            // ),
+           
           ],
         ),
       )),
