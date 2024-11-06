@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:foodex/getDetails.dart';
 import 'package:foodex/userpage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   Future<void> signInWithGoogle() async {
     setState(() => _isLoading = true);
@@ -60,6 +63,43 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = false);
   }
 
+  createEmail(String email, String password) async {
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  emailLogin(String email, String password) async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(
-                  height: 75,
+                  height: 3,
                 ),
                 Text(
                   "Login",
@@ -89,16 +129,67 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 30,
                 ),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Email",
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                        hintText: "Email",
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.all(16)),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: TextField(
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: "Password",
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.all(16),
                     ),
                   ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                        onPressed: () async{
+                          print("Started");
+                          await emailLogin(emailController.text, passwordController.text);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          "Sign In",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        )),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -142,7 +233,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
             Positioned(bottom: -200, left: 15, child: Image.asset("assets/userPhoto/biryani.png")),
-           
           ],
         ),
       )),

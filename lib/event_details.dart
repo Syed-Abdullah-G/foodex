@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
@@ -490,11 +491,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child:  _isloading ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(),
-                          ):  const Text(
+                  child:  _isloading ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const SizedBox(
+                              height: 20,
+                              width: double.infinity,
+                              child: CircularProgressIndicator(),
+                            ),
+                  ):  const Text(
                     'Submit',
                     style: TextStyle(
                       color: Colors.white,
