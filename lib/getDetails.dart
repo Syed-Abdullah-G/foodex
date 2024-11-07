@@ -20,9 +20,13 @@ class _HomeState extends State<Getdetails> {
   final shopnamecontroller = TextEditingController();
   final addresscontroller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   storeUserDetails(String name, String shopmobilenumber, String shopname,
       String address) async {
+        setState(() {
+          isLoading = true;
+        });
     final userdetails = Userdetails(
         name: name,
         shopmobilenumber: shopmobilenumber,
@@ -37,17 +41,7 @@ class _HomeState extends State<Getdetails> {
         context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
   }
 
-  emailLogin(String email, String password) async {
-    try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -56,14 +50,14 @@ class _HomeState extends State<Getdetails> {
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(10.0),
               child: Card(
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(32.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -108,6 +102,7 @@ class _HomeState extends State<Getdetails> {
                         const SizedBox(height: 32),
                         ElevatedButton(
                           onPressed: () async {
+                            
                             if (_formKey.currentState!.validate()) {
                               await storeUserDetails(
                                 namecontroller.text,
@@ -124,7 +119,7 @@ class _HomeState extends State<Getdetails> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text(
+                          child: isLoading? CircularProgressIndicator(color: Colors.white,) :Text(
                             'Submit',
                             style: TextStyle(
                               color: Colors.white,
@@ -150,7 +145,7 @@ class _HomeState extends State<Getdetails> {
     String hintText,
     String errorMessage, {
     TextInputType? keyboardType,
-    int maxLines = 1,
+     maxLines = null,
   }) {
     return TextFormField(
       controller: controller,

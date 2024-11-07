@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isLoading = false;
 
   Future<void> signInWithGoogle() async {
     setState(() => _isLoading = true);
@@ -80,7 +81,25 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  
+  emailLogin(String email, String password) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Getdetails(),
+          ));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -140,6 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: TextField(
+                    controller: passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       hintText: "Password",
@@ -161,8 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                        onPressed: () async{
-                          print("Started");
+                        onPressed: () async {
                           await emailLogin(emailController.text, passwordController.text);
                         },
                         style: ElevatedButton.styleFrom(
@@ -172,10 +191,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: Text(
-                          "Sign In",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        )),
+                        child: isLoading
+                            ? CircularProgressIndicator(color: Colors.white,)
+                            : Text(
+                                "Sign In",
+                                style: TextStyle(fontSize: 16, color: Colors.white),
+                              )),
                   ),
                 ),
                 SizedBox(
