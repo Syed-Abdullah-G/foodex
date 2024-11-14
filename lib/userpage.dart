@@ -75,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 address: address,
                 shopnumber: shopnumber,
                 name: name),
-            Getfood(),
+            const Getfood(),
           ],
         ),
       ),

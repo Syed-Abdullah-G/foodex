@@ -325,9 +325,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child:  _isloading ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: const SizedBox(
+                  child:  _isloading ? const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: SizedBox(
                               height: 20,
                               width: double.infinity,
                               child: CircularProgressIndicator(),

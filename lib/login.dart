@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Getdetails(),
+            builder: (context) => const Getdetails(),
           ));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -150,10 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.all(16)),
+                        contentPadding: const EdgeInsets.all(16)),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Padding(
@@ -169,11 +169,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: EdgeInsets.all(16),
+                      contentPadding: const EdgeInsets.all(16),
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Padding(
@@ -192,14 +192,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         child: isLoading
-                            ? CircularProgressIndicator(color: Colors.white,)
-                            : Text(
+                            ? const CircularProgressIndicator(color: Colors.white,)
+                            : const Text(
                                 "Sign In",
                                 style: TextStyle(fontSize: 16, color: Colors.white),
                               )),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Padding(
@@ -243,7 +243,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 )
               ],
             ),
-            Positioned(bottom: -200, left: 15, child: Image.asset("assets/userPhoto/biryani.png")),
+            Positioned(bottom: MediaQuery.of(context).size.height * -0.25
+            , left: 15, child: Image.asset("assets/userPhoto/biryani.png")),
           ],
         ),
       )),

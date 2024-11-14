@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foodex/event_details.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Uploadfood extends StatefulWidget {
    Uploadfood({super.key, required this.shopname, required this.address, required this.shopnumber, required this.name});

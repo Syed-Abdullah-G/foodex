@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:foodex/constants/area_names.dart';
 import 'package:foodex/screen/foodDescription.dart';
-import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 final db = FirebaseFirestore.instance;

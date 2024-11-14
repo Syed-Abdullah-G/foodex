@@ -1,11 +1,19 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/main.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:foodex/models/userDetails.dart';
 import 'package:foodex/userpage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 final db = FirebaseFirestore.instance;
+final userUID = FirebaseAuth.instance.currentUser!.uid;
+final storageRef = FirebaseStorage.instance.ref();
 
 class Getdetails extends StatefulWidget {
   const Getdetails({super.key});
@@ -21,21 +29,40 @@ class _HomeState extends State<Getdetails> {
   final addresscontroller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  String imagePath = "";
+
+
+  Future<void> _pickImage() async{
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        imagePath = pickedFile.path;
+      });
+    }
+  }
+    
+  
+
 
   storeUserDetails(String name, String shopmobilenumber, String shopname,
-      String address) async {
+      String address, String imagePath) async {
         setState(() {
           isLoading = true;
         });
+        File file  = File(imagePath);
+        final imagesRef = storageRef.child("profileImages/$userUID-$name");
+        await imagesRef.putFile(file);
+         final downloadURL = await imagesRef.getDownloadURL();
+
     final userdetails = Userdetails(
         name: name,
         shopmobilenumber: shopmobilenumber,
         shopname: shopname,
-        address: address);
+        address: address, imagePath: downloadURL);
     Map<String, String> userMap = userdetails.toJson();
     await db
         .collection("user")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(userUID)
         .set(userMap);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
@@ -64,6 +91,7 @@ class _HomeState extends State<Getdetails> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+
                         Text(
                           'Enter Details',
                           style: GoogleFonts.bebasNeue(
@@ -72,6 +100,17 @@ class _HomeState extends State<Getdetails> {
                             color: Colors.black87,
                           ),
                           textAlign: TextAlign.center,
+                        ),
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            backgroundColor: const Color.fromARGB(255, 213, 206, 206),
+                            radius: 50,
+                            child: imagePath != null ? CircleAvatar(
+                              radius: 47,
+                              backgroundImage: FileImage(File(imagePath)),
+                            ) : const Icon(Icons.add_a_photo, size: 30,)
+                          ),
                         ),
                         const SizedBox(height: 32),
                         _buildStyledTextField(
@@ -109,6 +148,8 @@ class _HomeState extends State<Getdetails> {
                                 mobilenumbercontroller.text,
                                 shopnamecontroller.text,
                                 addresscontroller.text,
+                                imagePath
+                              
                               );
                             }
                           },
@@ -119,7 +160,7 @@ class _HomeState extends State<Getdetails> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: isLoading? CircularProgressIndicator(color: Colors.white,) :Text(
+                          child: isLoading? const CircularProgressIndicator(color: Colors.white,) :const Text(
                             'Submit',
                             style: TextStyle(
                               color: Colors.white,
@@ -145,7 +186,7 @@ class _HomeState extends State<Getdetails> {
     String hintText,
     String errorMessage, {
     TextInputType? keyboardType,
-     maxLines = null,
+     maxLines,
   }) {
     return TextFormField(
       controller: controller,
