@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:foodex/event_details.dart';
 
-class Uploadfood extends StatefulWidget {
-   Uploadfood({super.key, required this.shopname, required this.address, required this.shopnumber, required this.name});
+class HomeScreen extends StatefulWidget {
+     HomeScreen({
+    required this.shopname,
+    required this.address,
+    required this.shopnumber,
+    required this.name,
+    required this.imagePath
+  });
+
 
   String shopname;
   String address;
   String shopnumber;
   String name;
+  String imagePath;
+
 
 
 
   @override
-  State<Uploadfood> createState() => _UploadfoodState();
+  State<HomeScreen> createState() => _UploadfoodState();
 }
 
-class _UploadfoodState extends State<Uploadfood> {
+class _UploadfoodState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(floatingActionButton: FloatingActionButton(backgroundColor: const Color.fromARGB(248, 213, 108, 108),

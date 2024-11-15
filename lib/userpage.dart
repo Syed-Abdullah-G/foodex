@@ -8,18 +8,19 @@ import 'package:foodex/widgets/uploadfood.dart';
 
 final db = FirebaseFirestore.instance;
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class BottomNavigationScreen extends StatefulWidget {
+  const BottomNavigationScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<BottomNavigationScreen> createState() => _BottomNavigationScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   String name = "";
   String shopnumber = "";
   String shopname = "";
   String address = "";
+  String imagePath = "";
   int _currentIndex = 0;
   late PageController _pageController;
 
@@ -34,6 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           shopnumber = data["shopnumber"] ?? "";
           shopname = data["shopname"] ?? "";
           address = data["address"] ?? "";
+          imagePath = data["imagePath"] ?? "";
         });
         // ...
       },
@@ -70,11 +72,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             });
           },
           children: [
-            Uploadfood(
+            HomeScreen(
                 shopname: shopname,
                 address: address,
                 shopnumber: shopnumber,
-                name: name),
+                name: name, imagePath: imagePath,),
             const Getfood(),
           ],
         ),

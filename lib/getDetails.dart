@@ -65,7 +65,7 @@ class _HomeState extends State<Getdetails> {
         .doc(userUID)
         .set(userMap);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+        context, MaterialPageRoute(builder: (context) => const BottomNavigationScreen()));
   }
 
   

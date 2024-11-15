@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => userDoc.exists ? const ProfileScreen() : const Getdetails(),
+            builder: (context) => userDoc.exists ? const BottomNavigationScreen() : const Getdetails(),
           ),
         );
       }
