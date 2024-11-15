@@ -49,7 +49,7 @@ class _FooddescriptionState extends State<Fooddescription> {
           "currency": "INR",
           "notes": {"branch": "Foodex Commission", "name": "Syed Abdullah"},
           "linked_account_notes": ["branch"],
-          "on_hold": 0
+          "on_hold": 0,
         }
       ]
     };
