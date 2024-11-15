@@ -1,16 +1,14 @@
+import 'dart:convert';
+import 'package:foodex/models/OrderResponse.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+
+final _razorpay = Razorpay();
 
 class Fooddescription extends StatefulWidget {
-  Fooddescription({super.key, 
-    required this.area,
-    required this.shopNumber,
-    required this.shopName,
-    required this.shopAddress,
-    required this.itemDescription,
-    required this.imageUrls,
-    required this.price
-  });
+  Fooddescription({super.key, required this.area, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrls, required this.price});
 
   String area;
   String shopNumber;
@@ -26,6 +24,120 @@ class Fooddescription extends StatefulWidget {
 
 class _FooddescriptionState extends State<Fooddescription> {
   int _currentImageIndex = 0;
+
+  Future<void> createOrder() async {
+    final String keyId = "";
+    final String keySecret = "";
+
+    final String url = "https://api.razorpay.com/v1/orders";
+
+    final requestBody = {
+      "amount": 3000,
+      "currency": "INR",
+      "transfers": [
+        {
+          "account": "acc_PGXA5GFiAwFfLD",
+          "amount": 2500,
+          "currency": "INR",
+          "notes": {"branch": "Royal Bakery", "name": "Senthil Nathan"},
+          "linked_account_notes": ["branch"],
+          "on_hold": 0,
+        },
+        {
+          "account": "acc_PG7uLBTqV9HqN7",
+          "amount": 500,
+          "currency": "INR",
+          "notes": {"branch": "Foodex Commission", "name": "Syed Abdullah"},
+          "linked_account_notes": ["branch"],
+          "on_hold": 0
+        }
+      ]
+    };
+
+
+  
+
+//Encoing the request body to JSON
+
+    final String jsonBody = json.encode(requestBody);
+
+// Make the HTTP POST request
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Basic " + base64Encode(utf8.encode("rzp_test_lzWR3duHRAxOv7:4taxttXylPHXU12PK3KwSApS")),
+        },
+        body: jsonBody,
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        OrderResponse orderResponse = OrderResponse.fromJson(responseData);
+        print("Order created successfully : ${response.body}");
+       //open razorpay checkout
+        _razorpay.open({
+  'key': 'rzp_test_lzWR3duHRAxOv7',
+  'amount': 3000, //in paise.
+  'name': 'Testing',
+  'order_id': orderResponse.id, // Generate order_id using Orders API
+  'description': 'Fine T-Shirt',
+  'timeout': 60, // in seconds
+  'prefill': {
+    'contact': '9000090000',
+    'email': 'gaurav.kumar@example.com'
+  }
+});
+      } else {
+        print("Failed to create order: ${response.statusCode} - ${response.body}");
+      }
+    } catch (e) {
+      print("Error creating order : $e");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    print(response);
+      print("Payment Success: ${response.paymentId}, Order Id: ${response.orderId}");
+
+    // print("Order created successfully");
+    // final responseData = json.decode(response.body);
+    // OrderResponse orderResponse = OrderResponse.fromJson(responseData);
+    // print("Order ID : ${orderResponse.id}");
+    // print("Order Amount: ${orderResponse.amount}");
+    // print("Order Status: ${orderResponse.status}");
+    // for (var transfer in orderResponse.transfers) {
+    //   print("Transfer ID: ${transfer.id}, Recipient: ${transfer.recipient}, Amount: ${transfer.amount}, Notes: ${transfer.notes}");}
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // Do something when payment fails
+      print("Payment Error: ${response.code}, ${response.message}");
+
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // Do something when an external wallet is selected
+      print("External Wallet: ${response.walletName}");
+
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _razorpay.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +197,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                         margin: const EdgeInsets.symmetric(horizontal: 4.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: _currentImageIndex == entry.key
-                              ? Colors.white
-                              : Colors.white.withOpacity(0.4),
+                          color: _currentImageIndex == entry.key ? Colors.white : Colors.white.withOpacity(0.4),
                         ),
                       );
                     }).toList(),
@@ -114,8 +224,9 @@ class _FooddescriptionState extends State<Fooddescription> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
-                          child: Text(maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          child: Text(
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             widget.shopName,
                             style: const TextStyle(
                               fontSize: 24,
@@ -184,10 +295,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                       child: SingleChildScrollView(
                         child: Text(
                           widget.itemDescription,
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            height: 1.5,fontSize: 20
-                          ),
+                          style: TextStyle(color: Colors.grey[700], height: 1.5, fontSize: 20),
                         ),
                       ),
                     ),
@@ -198,9 +306,7 @@ class _FooddescriptionState extends State<Fooddescription> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Add your order logic here
-                        },
+                        onPressed: createOrder,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrange,
                           shape: RoundedRectangleBorder(

@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:foodex/event_details.dart';
 import 'package:foodex/screen/getfood.dart';
-import 'package:foodex/widgets/uploadfood.dart';
+import 'package:foodex/widgets/HomeScreen.dart';
 
 final db = FirebaseFirestore.instance;
 

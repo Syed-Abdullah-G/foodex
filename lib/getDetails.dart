@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_launcher_icons/main.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:foodex/models/userDetails.dart';
-import 'package:foodex/userpage.dart';
+import 'package:foodex/bottomNavigationScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
