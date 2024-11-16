@@ -26,9 +26,10 @@ class _UploadfoodState extends State<HomeScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => AddExpenseScreen(
+                    
                         shopname: widget.shopname,
                         shopnumber: widget.shopnumber,
-                        address: widget.address,
+                        address: widget.address, account: widget.account,
                       )));
         },
         child: const Icon(

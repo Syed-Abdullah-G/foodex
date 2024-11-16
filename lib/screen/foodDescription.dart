@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:foodex/models/OrderResponse.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final _razorpay = Razorpay();
 
@@ -37,8 +39,6 @@ class _FooddescriptionState extends State<Fooddescription> {
   int _currentImageIndex = 0;
 
   Future<void> createOrder() async {
-    final String keyId = "";
-    final String keySecret = "";
 
     final String url = "https://api.razorpay.com/v1/orders";
 
@@ -48,7 +48,7 @@ class _FooddescriptionState extends State<Fooddescription> {
       "transfers": [
         {
           "account": widget.account,
-          "amount": ((widget.price * 100)*0.9).toString(),
+          "amount": (widget.price * 100)*0.9,
           "currency": "INR",
           "notes": {"branch": "Royal Bakery", "name": "Senthil Nathan"},
           "linked_account_notes": ["branch"],
@@ -56,7 +56,7 @@ class _FooddescriptionState extends State<Fooddescription> {
         },
         {
           "account": "acc_PG7uLBTqV9HqN7",
-          "amount": ((widget.price * 100)*0.1).toString(),
+          "amount": (widget.price * 100)*0.1,
           "currency": "INR",
           "notes": {"branch": "Foodex Commission", "name": "Syed Abdullah"},
           "linked_account_notes": ["branch"],
@@ -143,6 +143,16 @@ class _FooddescriptionState extends State<Fooddescription> {
 
   }
 
+
+  _makingPhoneCall(String number) async {
+    var url = Uri.parse("tel:$number");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw "Could not launch $url";
+    }
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -154,14 +164,24 @@ class _FooddescriptionState extends State<Fooddescription> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image Carousel
-            Stack(
-              children: [
-                CarouselSlider(
-                  options: CarouselOptions(
+        child: Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Food Image
+          Container(
+            height: 200,
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: CarouselSlider(
+                  options: CarouselOptions(enableInfiniteScroll: false,autoPlay: true,
                     height: 250,
                     viewportFraction: 1.0,
                     onPageChanged: (index, reason) {
@@ -181,165 +201,195 @@ class _FooddescriptionState extends State<Fooddescription> {
                       ),
                     );
                   }).toList(),
-                ),
-                // Back button
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.black.withOpacity(0.5),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                ),
-                // Image indicators
-                Positioned(
-                  bottom: 10,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: widget.imageUrls.asMap().entries.map((entry) {
-                      return Container(
-                        width: 8.0,
-                        height: 8.0,
-                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _currentImageIndex == entry.key ? Colors.white : Colors.white.withOpacity(0.4),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
+                )
             ),
-
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title and Quantity Counter
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Shop name and price
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Flexible(
-                          child: Text(
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            widget.shopName,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '₹${widget.price}',
-                          style: const TextStyle(
+                         Text(
+                             widget.itemDescription,
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.deepOrange,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Shop address with icon
-                    Row(
-                      children: [
-                        const Icon(Icons.location_on, color: Colors.grey, size: 28),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            '${widget.shopAddress}, ${widget.area}',
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-
-                    // Shop number with icon
-                    Row(
-                      children: [
-                        const Icon(Icons.store, color: Colors.grey, size: 28),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Shop ${widget.shopNumber}',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Description title
-                    const Text(
-                      'Description',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Description text
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Text(
-                          widget.itemDescription,
-                          style: TextStyle(color: Colors.grey[700], height: 1.5, fontSize: 20),
-                        ),
-                      ),
-                    ),
-
-                    // Order Now button
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: createOrder,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                        ),
-                        child: const Text(
-                          'Order Now',
+                         Text(
+                         widget.shopName,
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.grey,
+                            fontSize: 16,
                           ),
+                        ),
+                      ],
+                    ),
+                    // Quantity Counter
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          ListTile(leading: Icon(Icons.call),title: Text(widget.shopNumber, style: GoogleFonts.poppins(fontSize: 20),),trailing: IconButton(onPressed: () => _makingPhoneCall(widget.shopNumber), icon: Icon(Icons.call)),)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Rating, Time and Calories
+                Row(
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.star, color: Colors.amber, size: 20),
+                        const SizedBox(width: 4),
+                        const Text(
+                          '4.5',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 24),
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time, color: Colors.grey, size: 20),
+                        const SizedBox(width: 4),
+                        const Text(
+                          '8-10 min',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 24),
+                    Row(
+                      children: [
+                        const Icon(Icons.local_fire_department, color: Colors.grey, size: 20),
+                        const SizedBox(width: 4),
+                        const Text(
+                          '124 Kcal',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Nutritional Info
+                const Text(
+                  'Protein-50gm, Carbs-10gm, Fats-15gm',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+                
+                const SizedBox(height: 8),
+                
+                // Description
+                const Text(
+                  '(The unique recipe will make you fly in creaminess of cheeseburger)',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Customize Button
+                TextButton(
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Text(
+                        'Customize',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, color: Colors.black),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Total Amount and Add to Cart
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'Total amount',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          '\$30.00',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFD6F36A),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                      ),
+                      child: const Text(
+                        'Add to cart',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
+                
+                const SizedBox(height: 16),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    ),
       ),
     );
   }

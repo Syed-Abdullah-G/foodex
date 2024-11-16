@@ -19,22 +19,29 @@ class _GetfoodPageState extends State<Getfood> {
   List restaurants = [];
   bool _loading = true;
 
-  Future loadData(String area) async {
+  Future<void> loadData(String area) async {
     print("function started");
     setState(() {
   selectedArea = area;
-});
-    restaurants.clear();
-    final docRef = await db.collection(area).get().then((querySnapshot) {
-      for (var docSnapshot in querySnapshot.docs) {
-        restaurants.add(docSnapshot.data());
-        print(docSnapshot.data());
-        print(restaurants);
-      }
-    });
-setState(() {
-  _loading = false;
-});    
+        _loading = true; 
+
+});try {
+      restaurants.clear();
+      final querySnapshot = await db.collection(area).get();
+      
+      setState(() {
+        for (var docSnapshot in querySnapshot.docs) {
+          restaurants.add(docSnapshot.data());
+          print(docSnapshot.data());
+        }
+        _loading = false; // Set loading to false after data is loaded
+      });
+    } catch (e) {
+      print("Error loading data: $e");
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -54,8 +61,11 @@ setState(() {
                   items: Area_list,
                   hintText: "Select Area*",
                   excludeSelected: false,
-                  onChanged: (value) async {
-                    await loadData(value!);
+                  onChanged: (value)  {
+                    if (value != null) {
+                      loadData(value);
+                    }
+                    
                   }),
             ),
 
@@ -78,7 +88,7 @@ setState(() {
                      var account = foodItem["account"];
                      var itemDescription = foodItem["itemDescription"];
                      var dateofproduce = foodItem["dateofproduce"];
-                     double price = foodItem["price"] ?? 0.0;
+                     var price = foodItem["price"] ?? 0.0;
                
                      return GestureDetector(
                        onTap: () {

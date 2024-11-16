@@ -18,13 +18,16 @@ final storage = FirebaseStorage.instance.ref();
 
 
 class AddExpenseScreen extends StatefulWidget {
-  AddExpenseScreen({super.key, 
+    AddExpenseScreen({
     required this.shopname,
+    required this.account,
     required this.shopnumber,
-    required this.address,
+    required this.address
   });
 
+
   String shopname;
+  String account;
   String shopnumber;
   String address;
   @override
@@ -306,7 +309,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           dateofproduce:
                               selectedDate.toLocal().toString().split(' ')[0],
                           itemDescription: descriptionController.text,
-                          area: selectedArea!, imageUrls: imageUrls, price: price);
+                          area: selectedArea!, imageUrls: imageUrls, price: price, account: widget.account);
                       Map<String, dynamic> foodMap = foodDetail.toJson();
           
                     print("created mapping for food");

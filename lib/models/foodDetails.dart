@@ -1,6 +1,7 @@
 class FoodDetails {
 
-  FoodDetails({
+    FoodDetails({
+    required this.account,
     required this.shopname,
     required this.shopaddress,
     required this.shopnumber,
@@ -12,6 +13,7 @@ class FoodDetails {
   });
 
 
+  String account;
    String shopname;
    String shopaddress;
    String shopnumber;
@@ -25,6 +27,7 @@ class FoodDetails {
 
    Map<String, dynamic> toJson() {
     return {
+      "account": account,
       "shopname":shopname,
       "shopaddress":shopaddress,
       "shopmobile":shopnumber,
