@@ -329,7 +329,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: SizedBox(
                               height: 20,
-                              width: double.infinity,
+                             
                               child: CircularProgressIndicator(),
                             ),
                   ):  const Text(

@@ -75,13 +75,14 @@ setState(() {
                      var shopName = foodItem["shopname"];
                      var shopNumber = foodItem["shopmobile"];
                      var shopAddress = foodItem["shopaddress"];
+                     var account = foodItem["account"];
                      var itemDescription = foodItem["itemDescription"];
                      var dateofproduce = foodItem["dateofproduce"];
                      double price = foodItem["price"] ?? 0.0;
                
                      return GestureDetector(
                        onTap: () {
-                         Navigator.push(context, MaterialPageRoute(builder: (context) => Fooddescription(area: selectedArea , shopNumber: shopNumber, shopName: shopName, shopAddress: shopAddress, itemDescription: itemDescription, imageUrls: imageUrls, price: price,)));
+                         Navigator.push(context, MaterialPageRoute(builder: (context) => Fooddescription(area: selectedArea , shopNumber: shopNumber, shopName: shopName, shopAddress: shopAddress, itemDescription: itemDescription, imageUrls: imageUrls, price: price, account: account,)));
                        },
                        child: SquareImageCard(
                          imageUrl: imageUrl,

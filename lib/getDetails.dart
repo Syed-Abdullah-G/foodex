@@ -23,7 +23,7 @@ class Getdetails extends StatefulWidget {
 }
 
 class _HomeState extends State<Getdetails> {
-  final namecontroller = TextEditingController();
+  final accountcontroller = TextEditingController();
   final mobilenumbercontroller = TextEditingController();
   final shopnamecontroller = TextEditingController();
   final addresscontroller = TextEditingController();
@@ -44,18 +44,18 @@ class _HomeState extends State<Getdetails> {
   
 
 
-  storeUserDetails(String name, String shopmobilenumber, String shopname,
+  storeUserDetails(String account, String shopmobilenumber, String shopname,
       String address, String imagePath) async {
         setState(() {
           isLoading = true;
         });
         File file  = File(imagePath);
-        final imagesRef = storageRef.child("profileImages/$userUID-$name");
+        final imagesRef = storageRef.child("profileImages/$userUID-$account");
         await imagesRef.putFile(file);
          final downloadURL = await imagesRef.getDownloadURL();
 
     final userdetails = Userdetails(
-        name: name,
+        account: account,
         shopmobilenumber: shopmobilenumber,
         shopname: shopname,
         address: address, imagePath: downloadURL);
@@ -114,9 +114,9 @@ class _HomeState extends State<Getdetails> {
                         ),
                         const SizedBox(height: 32),
                         _buildStyledTextField(
-                          namecontroller,
-                          'Enter your name',
-                          'Please enter your name',
+                          accountcontroller,
+                          'Enter Account ID',
+                          'Please enter your Account ID',
                         ),
                         const SizedBox(height: 16),
                         _buildStyledTextField(
@@ -144,7 +144,7 @@ class _HomeState extends State<Getdetails> {
                             
                             if (_formKey.currentState!.validate()) {
                               await storeUserDetails(
-                                namecontroller.text,
+                                accountcontroller.text,
                                 mobilenumbercontroller.text,
                                 shopnamecontroller.text,
                                 addresscontroller.text,

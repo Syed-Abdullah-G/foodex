@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:foodex/event_details.dart';
 import 'package:foodex/screen/getfood.dart';
 import 'package:foodex/widgets/HomeScreen.dart';
+import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 final db = FirebaseFirestore.instance;
 
@@ -21,12 +22,12 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   String shopname = "";
   String address = "";
   String imagePath = "";
-  int _currentIndex = 0;
+  int selected = 0;
   late PageController _pageController;
+  final controller = PageController();
 
   loadData() {
-    final docRef =
-        db.collection("user").doc(FirebaseAuth.instance.currentUser!.uid);
+    final docRef = db.collection("user").doc(FirebaseAuth.instance.currentUser!.uid);
     docRef.get().then(
       (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
@@ -61,38 +62,50 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
+        child: Scaffold(extendBody: true,
+        resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: SizedBox.expand(
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
+      body: SafeArea(
+          child: PageView(
+        controller: controller,
+        children: [
+          HomeScreen(
+            shopname: shopname,
+            address: address,
+            shopnumber: shopnumber,
+            name: name,
+            imagePath: imagePath,
+          ),
+          const Getfood(),
+        ],
+      )),
+      bottomNavigationBar: StylishBottomBar(
+          items: [
+            BottomBarItem(
+              icon: Icon(Icons.delivery_dining_outlined),
+              title: Text("Order"),
+              selectedIcon: Icon(Icons.delivery_dining_rounded),
+            ),
+            BottomBarItem(icon: Icon(Icons.food_bank_outlined), title: Text("Food"), selectedIcon: Icon(Icons.food_bank_rounded))
+          ],
+          fabLocation: StylishBarFabLocation.end,
+        
+          currentIndex: selected,
+          onTap: (index) {
+
+            if (index == selected) return;
+            controller.jumpToPage(index);
             setState(() {
-              _currentIndex = index;
+              selected = index;
             });
           },
-          children: [
-            HomeScreen(
-                shopname: shopname,
-                address: address,
-                shopnumber: shopnumber,
-                name: name, imagePath: imagePath,),
-            const Getfood(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavyBar(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          selectedIndex: _currentIndex,
-          onItemSelected: (index) {
-            setState(() => _currentIndex = index);
-            _pageController.jumpToPage(index);
-          },
-          items: <BottomNavyBarItem>[
-            BottomNavyBarItem(
-                title: const Text('Create Event',style: TextStyle(color: Colors.black),), icon: const Icon(Icons.home, color: Color.fromARGB(248, 213, 108, 108),)),
-            BottomNavyBarItem(title: const Text('Food',style: TextStyle(color: Colors.black),), icon: const Icon(Icons.food_bank,color: Color.fromARGB(248, 213, 108, 108),)),
-          ]),
+         
+          option: AnimatedBarOptions(
+            iconSize: 32,
+            barAnimation: BarAnimation.blink,
+            iconStyle: IconStyle.Default,
+            opacity: 0.3,
+          )),
     ));
   }
 }

@@ -1,7 +1,7 @@
 class Userdetails {
 
   Userdetails({
-    required this.name,
+    required this.account,
     required this.shopmobilenumber,
     required this.shopname,
     required this.address,
@@ -9,7 +9,7 @@ class Userdetails {
   });
 
 
-   String name;
+   String account;
    String shopmobilenumber;
    String shopname;
    String address;
@@ -18,7 +18,7 @@ class Userdetails {
 
    Map<String, String> toJson() {
     return {
-      "name":name,
+      "account":account,
       "shopnumber":shopmobilenumber,
       "shopname":shopname,
       "address": address,

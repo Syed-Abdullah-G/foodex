@@ -8,9 +8,20 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 final _razorpay = Razorpay();
 
 class Fooddescription extends StatefulWidget {
-  Fooddescription({super.key, required this.area, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrls, required this.price});
+    Fooddescription({
+    required this.area,
+    required this.account,
+    required this.shopNumber,
+    required this.shopName,
+    required this.shopAddress,
+    required this.itemDescription,
+    required this.imageUrls,
+    required this.price
+  });
+
 
   String area;
+  String account;
   String shopNumber;
   String shopName;
   String shopAddress;
@@ -32,12 +43,12 @@ class _FooddescriptionState extends State<Fooddescription> {
     final String url = "https://api.razorpay.com/v1/orders";
 
     final requestBody = {
-      "amount": 3000,
+      "amount": widget.price * 100,
       "currency": "INR",
       "transfers": [
         {
-          "account": "acc_PGXA5GFiAwFfLD",
-          "amount": 2500,
+          "account": widget.account,
+          "amount": ((widget.price * 100)*0.9).toString(),
           "currency": "INR",
           "notes": {"branch": "Royal Bakery", "name": "Senthil Nathan"},
           "linked_account_notes": ["branch"],
@@ -45,7 +56,7 @@ class _FooddescriptionState extends State<Fooddescription> {
         },
         {
           "account": "acc_PG7uLBTqV9HqN7",
-          "amount": 500,
+          "amount": ((widget.price * 100)*0.1).toString(),
           "currency": "INR",
           "notes": {"branch": "Foodex Commission", "name": "Syed Abdullah"},
           "linked_account_notes": ["branch"],
@@ -82,8 +93,8 @@ class _FooddescriptionState extends State<Fooddescription> {
   'amount': 3000, //in paise.
   'name': 'Testing',
   'order_id': orderResponse.id, // Generate order_id using Orders API
-  'description': 'Fine T-Shirt',
-  'timeout': 60, // in seconds
+  'description': 'Food Ordering',
+  'timeout': 120, // in seconds
   'prefill': {
     'contact': '9000090000',
     'email': 'gaurav.kumar@example.com'
