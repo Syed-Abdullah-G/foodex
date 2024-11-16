@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:foodex/event_details.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({required this.shopname, required this.address, required this.shopnumber, required this.name, required this.imagePath});
+  HomeScreen({required this.shopname, required this.address, required this.shopnumber, required this.account, required this.imagePath});
 
   String shopname;
   String address;
   String shopnumber;
-  String name;
+  String account;
   String imagePath;
 
   @override
@@ -76,7 +76,7 @@ child: CachedNetworkImage(width: 100,height: 100,fit: BoxFit.cover,
             ),
             const SizedBox(height: 8),
             Text(
-              widget.name,
+              widget.account,
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.grey,

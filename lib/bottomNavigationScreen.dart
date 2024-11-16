@@ -17,7 +17,7 @@ class BottomNavigationScreen extends StatefulWidget {
 }
 
 class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
-  String name = "";
+  String account = "";
   String shopnumber = "";
   String shopname = "";
   String address = "";
@@ -32,7 +32,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         setState(() {
-          name = data["name"] ?? "";
+          account = data["account"] ?? "";
           shopnumber = data["shopnumber"] ?? "";
           shopname = data["shopname"] ?? "";
           address = data["address"] ?? "";
@@ -73,7 +73,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             shopname: shopname,
             address: address,
             shopnumber: shopnumber,
-            name: name,
+            account: account,
             imagePath: imagePath,
           ),
           const Getfood(),
