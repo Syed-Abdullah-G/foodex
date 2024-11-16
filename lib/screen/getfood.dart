@@ -1,6 +1,8 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:foodex/constants/area_names.dart';
 import 'package:foodex/screen/foodDescription.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -18,6 +20,8 @@ class _GetfoodPageState extends State<Getfood> {
   String selectedArea = "";
   List restaurants = [];
   bool _loading = true;
+  
+
 
   Future<void> loadData(String area) async {
     print("function started");
@@ -68,9 +72,9 @@ class _GetfoodPageState extends State<Getfood> {
                     
                   }),
             ),
-
+           _loading ? const Center(child: CircularProgressIndicator(),)
             // Grid of Places
-               restaurants.isNotEmpty ? Expanded(
+              : restaurants.isNotEmpty ? Expanded(
                child: ListView.builder(
                  padding: const EdgeInsets.all(16),
                  itemCount: restaurants[0]["fooditems"].length,
@@ -91,7 +95,7 @@ class _GetfoodPageState extends State<Getfood> {
                      var price = foodItem["price"] ?? 0.0;
                
                      return GestureDetector(
-                       onTap: () {
+                       onTap:  () {
                          Navigator.push(context, MaterialPageRoute(builder: (context) => Fooddescription(area: selectedArea , shopNumber: shopNumber, shopName: shopName, shopAddress: shopAddress, itemDescription: itemDescription, imageUrls: imageUrls, price: price, account: account,)));
                        },
                        child: SquareImageCard(
@@ -112,7 +116,7 @@ class _GetfoodPageState extends State<Getfood> {
   }
 }
 
-class SquareImageCard extends StatelessWidget {
+class SquareImageCard extends StatefulWidget {
   final String imageUrl;
   final String shopName;
   final double price;
@@ -125,6 +129,12 @@ class SquareImageCard extends StatelessWidget {
   });
 
   @override
+  State<SquareImageCard> createState() => _SquareImageCardState();
+}
+
+class _SquareImageCardState extends State<SquareImageCard> {
+  @override
+  
   Widget build(BuildContext context) {
     return Container(height: 300,
       decoration: BoxDecoration(
@@ -149,10 +159,8 @@ class SquareImageCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Center(
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: imageUrl,fit: BoxFit.cover,width: double.infinity,
-                  ),
+                  child: CachedNetworkImage(imageUrl: widget.imageUrl),
+    
                 ),
               ),
             ),
@@ -162,7 +170,7 @@ class SquareImageCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    shopName,
+                    widget.shopName,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -172,7 +180,7 @@ class SquareImageCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '₹${price.toString()}',
+                    '₹${widget.price.toString()}',
                     style: const TextStyle(
                       fontSize: 18,
                       color: Colors.green,

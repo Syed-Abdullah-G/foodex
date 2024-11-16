@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:foodex/models/OrderResponse.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -164,232 +166,236 @@ class _FooddescriptionState extends State<Fooddescription> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Food Image
-          Container(
-            height: 200,
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: CarouselSlider(
-                  options: CarouselOptions(enableInfiniteScroll: false,autoPlay: true,
-                    height: 250,
-                    viewportFraction: 1.0,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _currentImageIndex = index;
-                      });
-                    },
-                  ),
-                  items: widget.imageUrls.map<Widget>((imageUrl) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                )
-            ),
-          ),
-          
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title and Quantity Counter
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Text(
-                             widget.itemDescription,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                         Text(
-                         widget.shopName,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
+        child: SingleChildScrollView(
+          child: Container(
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+                ),
+                child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Food Image
+            Container(
+              height: 200,
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: CarouselSlider(
+                    options: CarouselOptions(enableInfiniteScroll: false,autoPlay: true,
+                      height: 200,//carousel height should match the container height
+                      viewportFraction: 1.0,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _currentImageIndex = index;
+                        });
+                      },
                     ),
-                    // Quantity Counter
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
+                    items: widget.imageUrls.map<Widget>((imageUrl) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: CachedNetworkImage(imageUrl: imageUrl,fit: BoxFit.cover,),
+                      );
+                    }).toList(),
+                  )
+              ),
+            ),
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title and Quantity Counter
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ListTile(leading: Icon(Icons.call),title: Text(widget.shopNumber, style: GoogleFonts.poppins(fontSize: 20),),trailing: IconButton(onPressed: () => _makingPhoneCall(widget.shopNumber), icon: Icon(Icons.call)),)
+                           Flexible(
+                             child: AutoSizeText(
+                                 "chicken biryani with egg and chilli chicken",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                                                       ),
+                           ),
+                           Container(
+                             child: AutoSizeText(
+                             widget.shopName,
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16,
+                              ),maxLines: 2,
+                                                       ),
+                           ),
+                           Container(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              child: ListTile(
+                                dense: true,
+                                leading: Icon(Icons.call),
+                                title: AutoSizeText(widget.shopNumber,
+                                style: GoogleFonts.poppins(fontSize: 16),maxLines: 1,
+                                ),
+                                trailing: TextButton(onPressed: () => _makingPhoneCall(widget.shopNumber), child: Text("Call"),),),),
+                              
+                            
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Rating, Time and Calories
-                Row(
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 20),
-                        const SizedBox(width: 4),
-                        const Text(
-                          '4.5',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 24),
-                    Row(
-                      children: [
-                        const Icon(Icons.access_time, color: Colors.grey, size: 20),
-                        const SizedBox(width: 4),
-                        const Text(
-                          '8-10 min',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 24),
-                    Row(
-                      children: [
-                        const Icon(Icons.local_fire_department, color: Colors.grey, size: 20),
-                        const SizedBox(width: 4),
-                        const Text(
-                          '124 Kcal',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Nutritional Info
-                const Text(
-                  'Protein-50gm, Carbs-10gm, Fats-15gm',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-                
-                const SizedBox(height: 8),
-                
-                // Description
-                const Text(
-                  '(The unique recipe will make you fly in creaminess of cheeseburger)',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Customize Button
-                TextButton(
-                  onPressed: () {},
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text(
-                        'Customize',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Icon(Icons.chevron_right, color: Colors.black),
+                      // Quantity Counter
+                     
                     ],
                   ),
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Total Amount and Add to Cart
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Rating, Time and Calories
+                  Row(
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 20),
+                          const SizedBox(width: 4),
+                          const Text(
+                            '4.5',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 24),
+                      Row(
+                        children: [
+                          const Icon(Icons.access_time, color: Colors.grey, size: 20),
+                          const SizedBox(width: 4),
+                          const Text(
+                            '8-10 min',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 24),
+                      Row(
+                        children: [
+                          const Icon(Icons.local_fire_department, color: Colors.grey, size: 20),
+                          const SizedBox(width: 4),
+                          const Text(
+                            '124 Kcal',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Nutritional Info
+                  const Text(
+                    'Protein-50gm, Carbs-10gm, Fats-15gm',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 8),
+                  
+                  // Description
+                  const Text(
+                    '(The unique recipe will make you fly in creaminess of cheeseburger)',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Customize Button
+                  TextButton(
+                    onPressed: () {},
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: const [
                         Text(
-                          'Total amount',
+                          'Customize',
                           style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          '\$30.00',
-                          style: TextStyle(
-                            fontSize: 24,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        Icon(Icons.chevron_right, color: Colors.black),
                       ],
                     ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD6F36A),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Total Amount and Add to Cart
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children:  [
+                          Text(
+                            'Total amount',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            '\₹${widget.price.toString()}',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD6F36A),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
+                        child: const Text(
+                          'Add to cart',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Add to cart',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 16),
-              ],
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    ),
+          ],
+                ),
+              ),
+        ),
       ),
     );
   }
