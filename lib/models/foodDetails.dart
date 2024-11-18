@@ -1,6 +1,7 @@
+
 class FoodDetails {
 
-    FoodDetails({
+      FoodDetails({
     required this.account,
     required this.shopname,
     required this.shopaddress,
@@ -8,9 +9,11 @@ class FoodDetails {
     required this.dateofproduce,
     required this.itemDescription,
     required this.area,
-    required this.imageUrls,
-    required this.price
+    required this.imageFileURL,
+    required this.price,
+    required this.quantity
   });
+
 
 
   String account;
@@ -20,8 +23,9 @@ class FoodDetails {
    String dateofproduce;
    String itemDescription;
    String area;
-   List imageUrls;
+   String imageFileURL;
    double price;
+   double quantity;
 
 
 
@@ -33,8 +37,9 @@ class FoodDetails {
       "shopmobile":shopnumber,
       "dateofproduce": dateofproduce,
       "itemDescription":itemDescription,
-      "imageUrls": imageUrls,
-      "price": price
+      "imageFileURL": imageFileURL,
+      "price": price,
+      "quantity": quantity
     };
    }
 

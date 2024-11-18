@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:foodex/event_details.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({required this.shopname, required this.address, required this.shopnumber, required this.account, required this.imagePath});
+  HomeScreen({required this.shopname, required this.address, required this.shopnumber, required this.account, required this.profileImage});
 
   String shopname;
   String address;
   String shopnumber;
   String account;
-  String imagePath;
+  String profileImage;
 
   @override
   State<HomeScreen> createState() => _UploadfoodState();
@@ -45,7 +45,7 @@ class _UploadfoodState extends State<HomeScreen> {
           children: [SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
             ClipOval(
 child: CachedNetworkImage(width: 100,height: 100,fit: BoxFit.cover,
-                imageUrl: widget.imagePath,
+                imageUrl: widget.profileImage,
                 placeholder: (context, url) => CircularProgressIndicator(),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               ),

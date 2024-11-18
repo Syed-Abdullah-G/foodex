@@ -20,19 +20,17 @@ class _GetfoodPageState extends State<Getfood> {
   String selectedArea = "";
   List restaurants = [];
   bool _loading = true;
-  
-
 
   Future<void> loadData(String area) async {
     print("function started");
     setState(() {
-  selectedArea = area;
-        _loading = true; 
-
-});try {
+      selectedArea = area;
+      _loading = true;
+    });
+    try {
       restaurants.clear();
       final querySnapshot = await db.collection(area).get();
-      
+
       setState(() {
         for (var docSnapshot in querySnapshot.docs) {
           restaurants.add(docSnapshot.data());
@@ -65,50 +63,73 @@ class _GetfoodPageState extends State<Getfood> {
                   items: Area_list,
                   hintText: "Select Area*",
                   excludeSelected: false,
-                  onChanged: (value)  {
+                  onChanged: (value) {
                     if (value != null) {
                       loadData(value);
                     }
-                    
                   }),
             ),
-           _loading ? const Center(child: CircularProgressIndicator(),)
-            // Grid of Places
-              : restaurants.isNotEmpty ? Expanded(
-               child: ListView.builder(
-                 padding: const EdgeInsets.all(16),
-                 itemCount: restaurants[0]["fooditems"].length,
-                 itemBuilder: (BuildContext context, index) {
-                   var foodItems = restaurants[0]["fooditems"];
-               
-                   if (index < foodItems.length) {
-                     var foodItem = foodItems[index];
-                     var imageUrls = foodItem["imageUrls"];
-                     var imageUrl = foodItem["imageUrls"][0];
-                     print("------------------------------$imageUrl");
-                     var shopName = foodItem["shopname"];
-                     var shopNumber = foodItem["shopmobile"];
-                     var shopAddress = foodItem["shopaddress"];
-                     var account = foodItem["account"];
-                     var itemDescription = foodItem["itemDescription"];
-                     var dateofproduce = foodItem["dateofproduce"];
-                     var price = foodItem["price"] ?? 0.0;
-               
-                     return GestureDetector(
-                       onTap:  () {
-                         Navigator.push(context, MaterialPageRoute(builder: (context) => Fooddescription(area: selectedArea , shopNumber: shopNumber, shopName: shopName, shopAddress: shopAddress, itemDescription: itemDescription, imageUrls: imageUrls, price: price, account: account,)));
-                       },
-                       child: SquareImageCard(
-                         imageUrl: imageUrl,
-                         shopName: shopName,
-                         price: price,
-                       ),
-                     );
-                   }
-                   return null;
-                 },
-               ),
-                          )   : Center(child: Text(_loading ? "Select Area": "No food items available",style: const TextStyle(fontSize: 18, color: Colors.grey),),)
+            _loading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                // Grid of Places
+                : restaurants.isNotEmpty
+                    ? Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: restaurants[0]["fooditems"].length,
+                          itemBuilder: (BuildContext context, index) {
+                            var foodItems = restaurants[0]["fooditems"];
+
+                            if (index < foodItems.length) {
+                              var foodItem = foodItems[index];
+                              var imageUrls = foodItem["imageUrls"];
+                              var imageUrl = foodItem["imageUrls"][0];
+                              print("------------------------------$imageUrl");
+                              var shopName = foodItem["shopname"];
+                              var shopNumber = foodItem["shopmobile"];
+                              var shopAddress = foodItem["shopaddress"];
+                              var account = foodItem["account"];
+                              var itemDescription = foodItem["itemDescription"];
+                              var dateofproduce = foodItem["dateofproduce"];
+                              var price = foodItem["price"] ?? 0.0;
+                              var quantity = foodItem["quantity"] ?? 0.0;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => FoodDetailCard(
+                                                area: selectedArea,
+                                                shopNumber: shopNumber,
+                                                shopName: shopName,
+                                                shopAddress: shopAddress,
+                                                itemDescription: itemDescription,
+                                                imageUrl: imageUrls,
+                                                price: price,
+                                                account: account,
+                                                quantity: quantity,
+                                              )));
+                                },
+                                child: SquareImageCard(
+                                  imageUrl: imageUrl,
+                                  shopName: shopName,
+                                  price: price,
+                                ),
+                              );
+                            }
+                            return null;
+                          },
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          _loading ? "Select Area" : "No food items available",
+                          style: const TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      )
           ],
         ),
       ),
@@ -134,9 +155,9 @@ class SquareImageCard extends StatefulWidget {
 
 class _SquareImageCardState extends State<SquareImageCard> {
   @override
-  
   Widget build(BuildContext context) {
-    return Container(height: 300,
+    return Container(
+      height: 300,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
@@ -160,7 +181,6 @@ class _SquareImageCardState extends State<SquareImageCard> {
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Center(
                   child: CachedNetworkImage(imageUrl: widget.imageUrl),
-    
                 ),
               ),
             ),

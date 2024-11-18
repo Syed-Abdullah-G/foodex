@@ -5,7 +5,7 @@ class Userdetails {
     required this.shopmobilenumber,
     required this.shopname,
     required this.address,
-    required this.imagePath
+    required this.profileImage
   });
 
 
@@ -13,7 +13,7 @@ class Userdetails {
    String shopmobilenumber;
    String shopname;
    String address;
-   String imagePath;
+   String profileImage;
 
 
    Map<String, String> toJson() {
@@ -22,7 +22,7 @@ class Userdetails {
       "shopnumber":shopmobilenumber,
       "shopname":shopname,
       "address": address,
-      "imagePath": imagePath
+      "profileImage": profileImage
     };
    }
 

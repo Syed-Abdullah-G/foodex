@@ -21,7 +21,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   String shopnumber = "";
   String shopname = "";
   String address = "";
-  String imagePath = "";
+  String profileImage = "";
   int selected = 0;
   late PageController _pageController;
   final controller = PageController();
@@ -36,7 +36,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           shopnumber = data["shopnumber"] ?? "";
           shopname = data["shopname"] ?? "";
           address = data["address"] ?? "";
-          imagePath = data["imagePath"] ?? "";
+          profileImage = data["profileImage"] ?? "";
         });
         // ...
       },
@@ -74,7 +74,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             address: address,
             shopnumber: shopnumber,
             account: account,
-            imagePath: imagePath,
+            profileImage: profileImage,
           ),
           const Getfood(),
         ],

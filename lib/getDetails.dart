@@ -29,14 +29,14 @@ class _HomeState extends State<Getdetails> {
   final addresscontroller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
-  String imagePath = "";
+  String profileImage = "";
 
 
   Future<void> _pickImage() async{
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        imagePath = pickedFile.path;
+        profileImage = pickedFile.path;
       });
     }
   }
@@ -58,7 +58,7 @@ class _HomeState extends State<Getdetails> {
         account: account,
         shopmobilenumber: shopmobilenumber,
         shopname: shopname,
-        address: address, imagePath: downloadURL);
+        address: address, profileImage: downloadURL);
     Map<String, String> userMap = userdetails.toJson();
     await db
         .collection("user")
@@ -106,9 +106,9 @@ class _HomeState extends State<Getdetails> {
                           child: CircleAvatar(
                             backgroundColor: const Color.fromARGB(255, 213, 206, 206),
                             radius: 50,
-                            child: imagePath != null ? CircleAvatar(
+                            child: profileImage != null ? CircleAvatar(
                               radius: 47,
-                              backgroundImage: FileImage(File(imagePath)),
+                              backgroundImage: FileImage(File(profileImage)),
                             ) : const Icon(Icons.add_a_photo, size: 30,)
                           ),
                         ),
@@ -148,7 +148,7 @@ class _HomeState extends State<Getdetails> {
                                 mobilenumbercontroller.text,
                                 shopnamecontroller.text,
                                 addresscontroller.text,
-                                imagePath
+                                profileImage
                               
                               );
                             }

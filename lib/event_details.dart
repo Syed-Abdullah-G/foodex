@@ -7,6 +7,7 @@ import 'package:drop_down_list/drop_down_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:foodex/constants/area_names.dart';
 import 'package:foodex/models/areaModel.dart';
 import 'package:foodex/models/foodDetails.dart';
@@ -39,14 +40,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   DateTime selectedDate = DateTime.now();
   final descriptionController = TextEditingController();
+  final priceController =  TextEditingController();
+  final quantityController = TextEditingController();
+
   File? _imageFile;
-  final List<XFile> _selectedImages = [];
-    List<String> imageUrls = [];
-  String? _imageName;
+  String? image;
   String? selectedArea;
   double price = 0;
   bool _isloading = false;
-
+  
   Future<void> _showImagePickerOptions() async {
     showModalBottomSheet(
         context: context,
@@ -58,12 +60,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 title: const Text("Take a Photo"),
                 onTap: () async {
                   final ImagePicker picker = ImagePicker();
-                  final XFile? images =
+                  final XFile? image =
                       await picker.pickImage(source: ImageSource.camera);
 
-                  if (images != null) {
+                  if (image != null) {
                     setState(() {
-                      _selectedImages.add(images);
+                      _imageFile = File(image.path);
                     });
                   }
                   Navigator.pop(context);
@@ -74,11 +76,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 title: const Text("Choose from Gallery"),
                 onTap: () async {
                   final ImagePicker picker = ImagePicker();
-                  final XFile? images =
+                  final XFile? image =
                       await picker.pickImage(source: ImageSource.gallery);
-                  if (images != null) {
+                  if (image != null) {
                     setState(() {
-                      _selectedImages.add(images);
+                      _imageFile = File(image.path);
                     });
                   }
                   Navigator.pop(context);
@@ -101,6 +103,37 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         selectedDate = picked;
       });
     }
+  }
+
+
+  _createPost(File imageFile) async{
+
+                // creating reference to the cloud storage
+                final reference = storage.child(selectedArea!).child("${widget.shopname}/${imageFile.path}.png");
+                // uploading the file to storage
+                  await reference.putFile(imageFile);
+                // obtaining download url of the image
+                final imageDownloadUrl =await reference.getDownloadURL();
+ 
+             // uploading the details along with the download URL to firestore database
+
+            final foodDetail = FoodDetails(
+                shopname: widget.shopname,
+                shopaddress: widget.address,
+                shopnumber: widget.shopnumber,
+                dateofproduce:
+                    selectedDate.toLocal().toString().split(' ')[0],
+                itemDescription: descriptionController.text,
+                area: selectedArea!, imageFileURL: imageDownloadUrl, price: double.parse(priceController.text), account: widget.account, quantity: double.parse(quantityController.text) );
+            Map<String, dynamic> foodMap = foodDetail.toJson();
+
+            await db
+                .collection(selectedArea!)
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .set({"fooditems": FieldValue.arrayUnion([foodMap])},SetOptions(merge: true));
+          
+          print("completed .........");
+          Navigator.pop(context);
   }
 
 
@@ -195,7 +228,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 fontSize: 14, color: Colors.black87,
               ),),
               const SizedBox(height: 8,),
-              TextFormField(
+              TextFormField(controller: priceController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   filled: true,
@@ -207,10 +240,27 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     return "Please enter a price";
                   } 
                   return null;
-                },onChanged: (value) {
-            setState(() {
-              price = double.parse(value);
-            });
+                },
+              ),
+              const SizedBox(height: 16,),
+
+              const Text("Quantity", style: TextStyle(
+                fontSize: 14, color: Colors.black87,
+              ),),
+              const SizedBox(height: 8,),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                controller: quantityController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+                ), validator: (value) {
+                  if (value == null || value.isNotEmpty) {
+                    return "Please enter quantity";
+                  }
+                  return null;
                 },
               ),
               const SizedBox(height: 16,),
@@ -222,43 +272,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   color: Colors.black87,
                 ),
               ),
-              _selectedImages.isNotEmpty
-                  ? Wrap(
-                      spacing: 8,
-                      children: _selectedImages
-                          .map(
-                            (image) => Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.file(
-                                    File(image.path),
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 5,
-                                  right: 5,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedImages.remove(image);
-                                      });
-                                    },
-                                    child: const Icon(
-                                      Icons.close,
-                                      color: Colors.red,
-                                      size: 30,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                          .toList(),
-                    )
+             
+                 (_imageFile != null) ?
+                 Image.file(_imageFile!,
+                 height: 200,
+                 fit: BoxFit.cover) 
                   : const SizedBox(),
               const SizedBox(height: 8),
               GestureDetector(
@@ -287,39 +305,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    setState(() {
-                      _isloading = !_isloading;
-                    });
-                      imageUrls = [];
-                    
-                    if (_formKey.currentState!.validate()) {
-                          for (XFile item in _selectedImages){
-                          final reference = storage.child(selectedArea!).child("${widget.shopname}/${item.path}.png");
-                            await reference.putFile(File(item.path));
-                          final imageDownloadUrl =await storage.child(selectedArea!).child("${widget.shopname}/${item.path}.png").getDownloadURL();
-                          imageUrls.add(imageDownloadUrl);
-                    print("download urls updated");
-                          }
-
-
-                      final foodDetail = FoodDetails(
-                          shopname: widget.shopname,
-                          shopaddress: widget.address,
-                          shopnumber: widget.shopnumber,
-                          dateofproduce:
-                              selectedDate.toLocal().toString().split(' ')[0],
-                          itemDescription: descriptionController.text,
-                          area: selectedArea!, imageUrls: imageUrls, price: price, account: widget.account);
-                      Map<String, dynamic> foodMap = foodDetail.toJson();
-          
-                    print("created mapping for food");
-                      await db
-                          .collection(selectedArea!)
-                          .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .set({"fooditems": FieldValue.arrayUnion([foodMap])},SetOptions(merge: true));
-                    }
-                    print("completed .........");
-                    Navigator.pop(context);
+                    if (_formKey.currentState!.validate() && _imageFile !=null) {
+                      setState(() {
+                        _isloading = true;
+                      });
+                      //await call uploading logic here
+                      setState(() {
+                        _isloading = false;
+                      });
+                      Navigator.pop(context);
+                    } 
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black87,
@@ -332,8 +327,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: SizedBox(
                               height: 20,
+                              width: 20,
                              
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator(color: Colors.white,),
                             ),
                   ):  const Text(
                     'Submit',
