@@ -46,7 +46,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   File? _imageFile;
   String? image;
   String? selectedArea;
-  double price = 0;
+  int price = 0;
   bool _isloading = false;
   
   Future<void> _showImagePickerOptions() async {
@@ -124,7 +124,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 dateofproduce:
                     selectedDate.toLocal().toString().split(' ')[0],
                 itemDescription: descriptionController.text,
-                area: selectedArea!, imageFileURL: imageDownloadUrl, price: double.parse(priceController.text), account: widget.account, quantity: double.parse(quantityController.text) );
+                area: selectedArea!, imageFileURL: imageDownloadUrl, price: int.parse(priceController.text), account: widget.account, quantity: int.parse(quantityController.text) );
             Map<String, dynamic> foodMap = foodDetail.toJson();
 
             await db
@@ -133,8 +133,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 .set({"fooditems": FieldValue.arrayUnion([foodMap])},SetOptions(merge: true));
           
           print("completed .........");
+
           Navigator.pop(context);
   }
+
+  
 
 
   @override
@@ -244,7 +247,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 16,),
 
-              const Text("Quantity", style: TextStyle(
+              const Text("Total Quantity", style: TextStyle(
                 fontSize: 14, color: Colors.black87,
               ),),
               const SizedBox(height: 8,),
@@ -257,9 +260,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
                 ), validator: (value) {
-                  if (value == null || value.isNotEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return "Please enter quantity";
+                    
                   }
+
+  
                   return null;
                 },
               ),
@@ -310,10 +316,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         _isloading = true;
                       });
                       //await call uploading logic here
-                      setState(() {
-                        _isloading = false;
-                      });
-                      Navigator.pop(context);
+                      await _createPost(_imageFile!);
+                     
+                      
                     } 
                   },
                   style: ElevatedButton.styleFrom(

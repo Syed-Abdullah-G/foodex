@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:foodex/constants/area_names.dart';
 import 'package:foodex/screen/foodDescription.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 final db = FirebaseFirestore.instance;
@@ -70,8 +71,8 @@ class _GetfoodPageState extends State<Getfood> {
                   }),
             ),
             _loading
-                ? const Center(
-                    child: CircularProgressIndicator(),
+                ? Center(
+                    child: Text("Please Select Area", style: GoogleFonts.poppins(fontSize: 20),),
                   )
                 // Grid of Places
                 : restaurants.isNotEmpty
@@ -84,17 +85,16 @@ class _GetfoodPageState extends State<Getfood> {
 
                             if (index < foodItems.length) {
                               var foodItem = foodItems[index];
-                              var imageUrls = foodItem["imageUrls"];
-                              var imageUrl = foodItem["imageUrls"][0];
-                              print("------------------------------$imageUrl");
+                              var imageFileURL = foodItem["imageFileURL"];
+            
                               var shopName = foodItem["shopname"];
                               var shopNumber = foodItem["shopmobile"];
                               var shopAddress = foodItem["shopaddress"];
                               var account = foodItem["account"];
                               var itemDescription = foodItem["itemDescription"];
                               var dateofproduce = foodItem["dateofproduce"];
-                              var price = foodItem["price"] ?? 0.0;
-                              var quantity = foodItem["quantity"] ?? 0.0;
+                              var price = foodItem["price"] ?? 0;
+                              var quantity = foodItem["quantity"] ?? 0;
 
                               return GestureDetector(
                                 onTap: () {
@@ -107,14 +107,14 @@ class _GetfoodPageState extends State<Getfood> {
                                                 shopName: shopName,
                                                 shopAddress: shopAddress,
                                                 itemDescription: itemDescription,
-                                                imageUrl: imageUrls,
+                                                imageUrl: imageFileURL,
                                                 price: price,
                                                 account: account,
                                                 quantity: quantity,
                                               )));
                                 },
                                 child: SquareImageCard(
-                                  imageUrl: imageUrl,
+                                  imageUrl: imageFileURL,
                                   shopName: shopName,
                                   price: price,
                                 ),
@@ -124,12 +124,7 @@ class _GetfoodPageState extends State<Getfood> {
                           },
                         ),
                       )
-                    : Center(
-                        child: Text(
-                          _loading ? "Select Area" : "No food items available",
-                          style: const TextStyle(fontSize: 18, color: Colors.grey),
-                        ),
-                      )
+                    : SizedBox()
           ],
         ),
       ),
@@ -140,7 +135,7 @@ class _GetfoodPageState extends State<Getfood> {
 class SquareImageCard extends StatefulWidget {
   final String imageUrl;
   final String shopName;
-  final double price;
+  final int price;
 
   const SquareImageCard({
     super.key,

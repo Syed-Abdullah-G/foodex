@@ -24,8 +24,8 @@ class FoodDetails {
    String itemDescription;
    String area;
    String imageFileURL;
-   double price;
-   double quantity;
+   int price;
+   int quantity;
 
 
 
