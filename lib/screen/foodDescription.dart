@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_launcher_icons/ios.dart';
-import 'package:foodex/models/OrderResponse.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:foodex/models/paymentFood.dart';
+import 'package:foodex/providers/foodData_provider.dart';
 import 'package:foodex/razorpayService.dart';
-import 'package:foodex/screen/PaymentSuccessfulScreen.dart';
-import 'package:intl/intl.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-class FoodDetailCard extends StatefulWidget {
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+class FoodDetailCard extends ConsumerStatefulWidget {
   FoodDetailCard({required this.area, required this.account, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrl, required this.price, required this.quantity});
 
   String area;
@@ -20,10 +19,10 @@ class FoodDetailCard extends StatefulWidget {
   int quantity; // used
 
   @override
-  State<FoodDetailCard> createState() => _FoodDetailCardState();
+  ConsumerState<FoodDetailCard> createState() => _FoodDetailCardState();
 }
 
-class _FoodDetailCardState extends State<FoodDetailCard> {
+class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
   late int quantityController = 0;
   int totalAmount = 0;
   final _razorpay = Razorpay();
@@ -47,6 +46,8 @@ class _FoodDetailCardState extends State<FoodDetailCard> {
 
   @override
   Widget build(BuildContext context) {
+    
+    
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
@@ -210,24 +211,26 @@ class _FoodDetailCardState extends State<FoodDetailCard> {
                           ElevatedButton(
                             onPressed: () async {
                               try {
-                                  final userData = await RazorpayService().processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7","fresh and tasty","Ram Kumar", widget.shopName);
-                                 final orderId  = userData["Order ID"];
-                                 final Total_Amount  = userData["Total Amount"];
-                                 final Transfers  = userData["Transfers"];
-                                 final transfer_1_data = Transfers["Transfer ID"];
-                                 final transfer_1_recipient_ID = Transfers["Recipient ID"];
-                                 final transfer_1_amount = Transfers["Amount"];
-                                 final transfer_1_branch = Transfers["Notes_branch"];
-                                 final transfer_1_notes = Transfers["Notes_name"];
 
 
-                                if (!context.mounted) return;
-                                final now = DateTime.now();
-                                final formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
-                                final formatted = formatter.format(now);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PaymentSuccessScreen(transactionId: orderId.toString(), date: formatted, nominal: totalAmount.toDouble(),status: "Success", total:totalAmount.toDouble()),
-                                ));
+                                final userData = await RazorpayService().processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7","fresh and tasty","Ram Kumar", widget.shopName);
+                                //  final orderId  = userData["Order ID"];
+                                //  final Total_Amount  = userData["Total Amount"];
+                                //  final Transfers  = userData["Transfers"];
+                                //  final transfer_1_data = Transfers["Transfer ID"];
+                                //  final transfer_1_recipient_ID = Transfers["Recipient ID"];
+                                //  final transfer_1_amount = Transfers["Amount"];
+                                //  final transfer_1_branch = Transfers["Notes_branch"];
+                                //  final transfer_1_notes = Transfers["Notes_name"];
+
+
+                                // if (!context.mounted) return;
+                                // final now = DateTime.now();
+                                // final formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                // final formatted = formatter.format(now);
+                                // Navigator.of(context).push(MaterialPageRoute(
+                                //   builder: (context) => PaymentSuccessScreen(transactionId: orderId.toString(), date: formatted, nominal: totalAmount.toDouble(),status: "Success", total:totalAmount.toDouble()),
+                                // ));
                               } catch (e) {
                                 print("Payment initiation failed: $e");
                                 if (!context.mounted) return;

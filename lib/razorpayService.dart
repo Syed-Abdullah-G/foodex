@@ -55,7 +55,6 @@ class RazorpayService {
 
       if (response.statusCode == 200) {
         print("---------------------------------------------createOrder");
-
         return jsonDecode(response.body);
       } else {
         throw Exception('Failed to create Razorpay order: ${response.body}');
@@ -93,10 +92,7 @@ class RazorpayService {
     try {
       print("------------------------------------------------processOrder");
       final orderResponse = await createOrder(amount, Acc1, Acc2, Acc1_branch, Acc1_name);
-      print(orderResponse);
-      if (orderResponse["amount"] != null && orderResponse["id"] != null){
-               await initiatePayment(orderResponse["amount"], orderResponse["id"]);
-         }
+      await initiatePayment(orderResponse["amount"], orderResponse["id"]);
 
       
         // print(jsonEncode(orderResponse));
@@ -114,7 +110,6 @@ class RazorpayService {
             "Notes_name": transfer["notes"]["name"],
           });
          print(transfer["amount"].runtimeType);
-         
         }
         
         
