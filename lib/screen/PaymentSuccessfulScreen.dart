@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:foodex/bottomNavigationScreen.dart';
+import 'package:foodex/widgets/HomeScreen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final String transactionId;
@@ -7,19 +9,16 @@ class PaymentSuccessScreen extends StatelessWidget {
   final double foodexCommission;
   final String status;
   final double total;
+  final int quantity;
+  final String itemDescription;
+  final int shopprice;
 
-  const PaymentSuccessScreen({
-    Key? key,
-    required this.transactionId,
-    required this.date,
-    required this.nominal,
-    required this.status,
-    required this.total,
-  }) : foodexCommission = (nominal * 0.07), super(key: key);
+  const PaymentSuccessScreen({Key? key, required this.transactionId, required this.date, required this.nominal, required this.status, required this.total, required this.quantity, required this.itemDescription, required this.shopprice})
+      : foodexCommission = (nominal * 0.07),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
@@ -63,7 +62,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Successfully paid \$${nominal.toStringAsFixed(2)}',
+                'Successfully paid \₹${nominal.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -93,10 +92,13 @@ class PaymentSuccessScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
+                      _buildDetailRow("Item", itemDescription),
+                      _buildDetailRow('Item Amount', '₹${shopprice.toStringAsFixed(2)}'),
+                      _buildDetailRow("Quantity", quantity.toString()),
+                      _buildDetailRow("Total Amount", "₹${shopprice * quantity}"),
                       _buildDetailRow('Transaction ID', transactionId),
                       _buildDetailRow('Date', date),
-                      _buildDetailRow('Nominal', '\$${nominal.toStringAsFixed(2)}'),
-                      _buildDetailRow('Foodex Fee', '\$${foodexCommission.toStringAsFixed(2)}'),
+                      _buildDetailRow('Platform Fee', '₹${foodexCommission.toStringAsFixed(2)}'),
                       _buildStatusRow('Status', status),
                     ],
                   ),
@@ -125,7 +127,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$${total.toStringAsFixed(2)}',
+                      '\₹${total.toStringAsFixed(2)}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -135,6 +137,30 @@ class PaymentSuccessScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(
+                height: 12,
+              ),
+              Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1B4242),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => BottomNavigationScreen()),
+                        (route) => false, // Removes all previous routes
+                      );
+                    },
+                    child: Text(
+                      'Go Back',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  )),
             ],
           ),
         ),

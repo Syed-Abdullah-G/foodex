@@ -1,7 +1,7 @@
 
 class FoodDetails {
 
-      FoodDetails({
+          FoodDetails({
     required this.account,
     required this.shopname,
     required this.shopaddress,
@@ -11,8 +11,12 @@ class FoodDetails {
     required this.area,
     required this.imageFileURL,
     required this.price,
-    required this.quantity
+    required this.quantity,
+    required this.userid,
+    required this.shopprice
   });
+
+
 
 
 
@@ -26,6 +30,8 @@ class FoodDetails {
    String imageFileURL;
    int price;
    int quantity;
+   String userid;
+   int shopprice;
 
 
 
@@ -39,7 +45,9 @@ class FoodDetails {
       "itemDescription":itemDescription,
       "imageFileURL": imageFileURL,
       "price": price,
-      "quantity": quantity
+      "quantity": quantity,
+      "userid": userid,
+      "shopprice":shopprice
     };
    }
 

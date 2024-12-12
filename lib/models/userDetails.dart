@@ -1,28 +1,39 @@
 class Userdetails {
 
-  Userdetails({
+      Userdetails({
     required this.account,
+    required this.uid,
     required this.shopmobilenumber,
     required this.shopname,
     required this.address,
-    required this.profileImage
+    required this.area,
+    required this.accountType,
+    required this.email,
   });
 
 
+
+
    String account;
+   String uid;
    String shopmobilenumber;
    String shopname;
    String address;
-   String profileImage;
+   String area;
+   String accountType;
+   String email;
 
 
    Map<String, String> toJson() {
     return {
       "account":account,
+      "uid":uid,
       "shopnumber":shopmobilenumber,
       "shopname":shopname,
       "address": address,
-      "profileImage": profileImage
+      "area": area,
+      "accountType": accountType,
+      "email": email,
     };
    }
 

@@ -14,16 +14,19 @@ import 'package:foodex/models/foodDetails.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 final db = FirebaseFirestore.instance;
 final storage = FirebaseStorage.instance.ref();
 
 
-class AddExpenseScreen extends StatefulWidget {
-    AddExpenseScreen({
+class event_details extends StatefulWidget {
+    event_details({
     required this.shopname,
     required this.account,
     required this.shopnumber,
-    required this.address
+    required this.address,
+    required this.userid,
   });
 
 
@@ -31,11 +34,12 @@ class AddExpenseScreen extends StatefulWidget {
   String account;
   String shopnumber;
   String address;
+  String userid;
   @override
   _AddExpenseScreenState createState() => _AddExpenseScreenState();
 }
 
-class _AddExpenseScreenState extends State<AddExpenseScreen> {
+class _AddExpenseScreenState extends State<event_details> {
   final _formKey = GlobalKey<FormState>();
 
   DateTime selectedDate = DateTime.now();
@@ -45,8 +49,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   File? _imageFile;
   String? image;
-  String? selectedArea;
   int price = 0;
+  String areaName = "";
   bool _isloading = false;
   
   Future<void> _showImagePickerOptions() async {
@@ -107,15 +111,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
 
   _createPost(File imageFile) async{
+    print(widget.userid);
 
                 // creating reference to the cloud storage
-                final reference = storage.child(selectedArea!).child("${widget.shopname}/${imageFile.path}.png");
+                final reference = storage.child(areaName!).child("${widget.shopname}/${imageFile.path}.png");
                 // uploading the file to storage
                   await reference.putFile(imageFile);
                 // obtaining download url of the image
                 final imageDownloadUrl =await reference.getDownloadURL();
  
              // uploading the details along with the download URL to firestore database
+
+             //price added with commission
+double price = double.parse(priceController.text) * 1.07;
+int wholePrice = price.round();
+
+
 
             final foodDetail = FoodDetails(
                 shopname: widget.shopname,
@@ -124,12 +135,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 dateofproduce:
                     selectedDate.toLocal().toString().split(' ')[0],
                 itemDescription: descriptionController.text,
-                area: selectedArea!, imageFileURL: imageDownloadUrl, price: int.parse(priceController.text), account: widget.account, quantity: int.parse(quantityController.text) );
+                area: areaName!, imageFileURL: imageDownloadUrl, price: wholePrice, account: widget.account, quantity: int.parse(quantityController.text) ,userid: widget.userid, shopprice: int.parse(priceController.text));
             Map<String, dynamic> foodMap = foodDetail.toJson();
 
             await db
-                .collection(selectedArea!)
-                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .collection(areaName!)
+                .doc(widget.userid)
                 .set({"fooditems": FieldValue.arrayUnion([foodMap])},SetOptions(merge: true));
           
           print("completed .........");
@@ -137,7 +148,32 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           Navigator.pop(context);
   }
 
-  
+
+  Future getUserData() async {
+
+SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+ setState(() {
+  areaName = sharedPreferences.getString("area")!;
+});
+
+}
+
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserData();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    descriptionController.dispose();
+    quantityController.dispose();
+    priceController.dispose();
+  }
 
 
   @override
@@ -145,7 +181,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(),
-        title: const Text('Add new event'),
+        title: const Text('Post Food'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -165,15 +201,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   color: Colors.black87,
                 ),
               ),
-              CustomDropdown.search(
-                  items: Area_list,
-                  hintText: "Select Area*",
-                  excludeSelected: false,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedArea = value;
-                    });
-                  }),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius:  BorderRadius.circular(4),
+                ), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Text(areaName),
+              ),
+
               const SizedBox(
                 height: 8,
               ),
@@ -265,7 +300,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     
                   }
 
-  
                   return null;
                 },
               ),

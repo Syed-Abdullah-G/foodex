@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodex/models/paymentFood.dart';
-import 'package:foodex/providers/foodData_provider.dart';
+import 'package:foodex/providers/payment_provider.dart';
 import 'package:foodex/razorpayService.dart';
 
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class FoodDetailCard extends ConsumerStatefulWidget {
-  FoodDetailCard({required this.area, required this.account, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrl, required this.price, required this.quantity});
+  FoodDetailCard({required this.area, required this.account, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrl, required this.price, required this.quantity, required this.userid, required this.shopprice});
 
   String area;
-  String account;
+  String account; //used
   String shopNumber;
   String shopName; //used
   String shopAddress; //used
-  String itemDescription; // used
+  String itemDescription; 
   String imageUrl; //used
   int price; //used
   int quantity; // used
+  String userid;
+  int shopprice;
 
   @override
   ConsumerState<FoodDetailCard> createState() => _FoodDetailCardState();
@@ -25,7 +28,7 @@ class FoodDetailCard extends ConsumerStatefulWidget {
 class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
   late int quantityController = 0;
   int totalAmount = 0;
-  final _razorpay = Razorpay();
+    final _razorpay = Razorpay();
 
   @override
   void initState() {
@@ -43,6 +46,8 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
     super.dispose();
     _razorpay.clear(); // Removes all listeners
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -211,26 +216,13 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                           ElevatedButton(
                             onPressed: () async {
                               try {
+                                print("jsdfjdjkljasfjsrfijsefierjfiewjhrifejrfesjriejior");
+                                print(widget.userid);
 
 
-                                final userData = await RazorpayService().processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7","fresh and tasty","Ram Kumar", widget.shopName);
-                                //  final orderId  = userData["Order ID"];
-                                //  final Total_Amount  = userData["Total Amount"];
-                                //  final Transfers  = userData["Transfers"];
-                                //  final transfer_1_data = Transfers["Transfer ID"];
-                                //  final transfer_1_recipient_ID = Transfers["Recipient ID"];
-                                //  final transfer_1_amount = Transfers["Amount"];
-                                //  final transfer_1_branch = Transfers["Notes_branch"];
-                                //  final transfer_1_notes = Transfers["Notes_name"];
-
-
-                                // if (!context.mounted) return;
-                                // final now = DateTime.now();
-                                // final formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
-                                // final formatted = formatter.format(now);
-                                // Navigator.of(context).push(MaterialPageRoute(
-                                //   builder: (context) => PaymentSuccessScreen(transactionId: orderId.toString(), date: formatted, nominal: totalAmount.toDouble(),status: "Success", total:totalAmount.toDouble()),
-                                // ));
+                                // final userData = await RazorpayService().processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7","fresh and tasty","Ram Kumar", widget.shopName);
+                            final razorpayService = RazorpayService(ref, context);
+                            razorpayService.processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7",widget.shopName,widget.shopAddress, widget.shopName, quantityController, widget.itemDescription, widget.area,widget.userid, widget.shopprice );
                               } catch (e) {
                                 print("Payment initiation failed: $e");
                                 if (!context.mounted) return;

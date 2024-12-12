@@ -21,13 +21,12 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   String shopnumber = "";
   String shopname = "";
   String address = "";
-  String profileImage = "";
-  int selected = 0;
-  late PageController _pageController;
-  final controller = PageController();
+  String accountType = "";
+  String userid = "";
+
 
   loadData() {
-    final docRef = db.collection("user").doc(FirebaseAuth.instance.currentUser!.uid);
+    final docRef = db.collection("user").doc(FirebaseAuth.instance.currentUser!.email);
     docRef.get().then(
       (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
@@ -36,7 +35,9 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           shopnumber = data["shopnumber"] ?? "";
           shopname = data["shopname"] ?? "";
           address = data["address"] ?? "";
-          profileImage = data["profileImage"] ?? "";
+          accountType = data["accountType"] ?? "";
+          userid = data["uid"] ?? "";
+
         });
         // ...
       },
@@ -49,15 +50,9 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     // TODO: implement initState
     super.initState();
     loadData();
-    _pageController = PageController();
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _pageController.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -65,47 +60,13 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
         child: Scaffold(extendBody: true,
         resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: SafeArea(
-          child: PageView(
-        controller: controller,
-        children: [
-          HomeScreen(
-            shopname: shopname,
-            address: address,
-            shopnumber: shopnumber,
-            account: account,
-            profileImage: profileImage,
-          ),
-          const Getfood(),
-        ],
-      )),
-      bottomNavigationBar: StylishBottomBar(
-          items: [
-            BottomBarItem(
-              icon: Icon(Icons.delivery_dining_outlined),
-              title: Text("Order"),
-              selectedIcon: Icon(Icons.delivery_dining_rounded),
-            ),
-            BottomBarItem(icon: Icon(Icons.food_bank_outlined), title: Text("Food"), selectedIcon: Icon(Icons.food_bank_rounded))
-          ],
-          fabLocation: StylishBarFabLocation.end,
-        
-          currentIndex: selected,
-          onTap: (index) {
-
-            if (index == selected) return;
-            controller.jumpToPage(index);
-            setState(() {
-              selected = index;
-            });
-          },
-         
-          option: AnimatedBarOptions(
-            iconSize: 32,
-            barAnimation: BarAnimation.blink,
-            iconStyle: IconStyle.Default,
-            opacity: 0.3,
-          )),
+      body: HomeScreen(
+        shopname: shopname,
+        address: address,
+        shopnumber: shopnumber,
+        account: account, accountType: accountType,userid: userid,
+      ),
+      
     ));
   }
 }
