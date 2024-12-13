@@ -65,6 +65,7 @@ dependencies:
   custom_button_builder: ^0.0.4
   flutter_screenutil: ^5.9.3
   lottie: ^3.1.3
+  giffy_dialog: ^2.3.0
 
 
 flutter_launcher_icons:
@@ -113,6 +114,7 @@ flutter:
   - assets/userPhoto/logo.png
   - assets/userPhoto/google_logo.png
   - assets/userPhoto/avatar.png
+  - assets/gif/gambar-burger-kartun-14.gif
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

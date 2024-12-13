@@ -4,6 +4,7 @@ import 'package:custom_button_builder/custom_button_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/constants/colors.dart';
 import 'package:foodex/event_details.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,9 +46,8 @@ class _UploadfoodState extends State<HomeScreen> {
     final foodItemsSet = restaurant["fooditems"];
     setState(() {
       orders = foodItemsSet.toList();
-      completedOrders = orders.where((item) => item["quantity"] == 0).toList(); // Filter completed orders
-      uncompletedOrders = orders.where((item) => item["quantity"] != 0).toList(); // Filter completed orders
-
+      _updateOrderLists();
+  
       isLoading = false;
     });
     return orders;} catch (e) {
@@ -55,6 +55,14 @@ class _UploadfoodState extends State<HomeScreen> {
       return [];
     }
     // [{dateofproduce: 2024-11-30, quantity: 3, price: 40, shopname: Fresh N Tasty, shopaddress: Avadi, Chennai., shopmobile: 7200054975, imageFileURL: https://firebasestorage.googleapis.com/v0/b/food-f88e3.appspot.com/o/Avadi%2FFresh%20N%20Tasty%2Fdata%2Fuser%2F0%2Fcom.testing.foodex%2Fcache%2F4c1091b3-c1ed-4c0b-9b6d-a57ecd53ce28%2F25.jpg.png?alt=media&token=bcaeab85-0a69-4dcc-9eca-99293c9cbe63, itemDescription: butter chicken, account: 5P8xfM4pr7hxV26O37iK5ZYMDM62}, {dateofproduce: 2024-11-30, quantity: 2, price: 20, shopname: Fresh N Tasty, shopaddress: Avadi, Chennai., shopmobile: 7200054975, imageFileURL: https://firebasestorage.googleapis.com/v0/b/food-f88e3.appspot.com/o/Avadi%2FFresh%20N%20Tasty%2Fdata%2Fuser%2F0%2Fcom.testing.foodex%2Fcache%2F4b5e5623-89e0-482b-8955-4d16074042db%2F20.jpg.png?alt=media&token=95f021f0-492e-4848-883e-a1047dabb881, itemDescription: biryani, account: 5P8xfM4pr7hxV26O37iK5ZYMDM62}]
+  }
+
+  void _updateOrderLists() {
+     if (selectedOption == "completed") {
+      completedOrders = orders.where((item) => item["quantity"] == 0).toList();
+    } else {
+      completedOrders = orders.where((item) => item["quantity"] != 0).toList();
+    }
   }
 
   void _showLogoutDialog(BuildContext context) {
@@ -174,7 +182,7 @@ class _UploadfoodState extends State<HomeScreen> {
                       onPressed: () {
                         setState(() {
                           selectedOption = "completed";
-                          completedOrders = orders.where((item) => item["quantity"] == 0).toList(); // Filter completed orders
+                          _updateOrderLists();
                         });
                       },
                     ),
@@ -189,8 +197,8 @@ class _UploadfoodState extends State<HomeScreen> {
                       onPressed: () {
                         setState(() {
                           selectedOption = "pending";
+                          _updateOrderLists();
                 
-                          completedOrders = orders.where((item) => item["quantity"] != 0).toList(); // Filter completed orders
                         });
                       },
                     ),
@@ -213,12 +221,12 @@ class _UploadfoodState extends State<HomeScreen> {
                       return Center(child: Text('No items found.')); // Show no items message
                     } else {
                       return Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: const BoxDecoration(
+                          padding:  EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                          decoration:  BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(32),
-                              topRight: Radius.circular(32),
+                              topLeft: Radius.circular(32.r),
+                              topRight: Radius.circular(32.r),
                             ),
                           ),
                           child: Column(
@@ -240,7 +248,7 @@ class _UploadfoodState extends State<HomeScreen> {
                                               final dateofproduce = item["dateofproduce"];
                                               final quantity = item["quantity"];
 
-                                              final price = item["price"];
+                                              final price = item["shopprice"];
                                               final shopname = item["shopname"];
 
                                               final shopaddress = item["shopaddress"];

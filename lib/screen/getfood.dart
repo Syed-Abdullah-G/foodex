@@ -18,7 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 final db = FirebaseFirestore.instance;
- final userid = FirebaseAuth.instance.currentUser!.email;
+final userid = FirebaseAuth.instance.currentUser!.email;
 
 class Getfood extends StatefulWidget {
   const Getfood({super.key});
@@ -35,10 +35,10 @@ class _GetfoodPageState extends State<Getfood> {
   String mobile = "";
   String area = "";
   String email = "";
-  String uid ="";
+  String uid = "";
   Future<dynamic>? dataFuture;
 
-    Future<void> loadUserData() async{
+  Future<void> loadUserData() async {
     final docRef = db.collection("consumer").doc(userid);
     docRef.get().then(
       (DocumentSnapshot doc) {
@@ -49,9 +49,6 @@ class _GetfoodPageState extends State<Getfood> {
           area = data['area'];
           email = data['email'];
           uid = data['uid'];
-
-         
-
         });
       },
       onError: (e) => print("Error getting document: $e"),
@@ -115,91 +112,94 @@ class _GetfoodPageState extends State<Getfood> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:   Padding(
-        padding: EdgeInsets.symmetric(vertical: 34.h, horizontal: 15.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Hi, ${name}',
-              style: GoogleFonts.montserrat(fontSize: 30.sp, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 1.h,
-            ),
-            Text('Craving for Biryani ?', style: GoogleFonts.inter(fontSize: 20.sp, color: Color.fromRGBO(136, 136, 136, 100))),
-            SizedBox(height: 16),
-            CustomDropdown.search(
-                decoration: CustomDropdownDecoration(closedFillColor: Colors.blue[600], expandedFillColor: Colors.white, hintStyle: TextStyle(color: Colors.white)),
-                items: Area_list,
-                hintText: "Select Area*",
-                excludeSelected: false,
-                onChanged: (value) {
-                  if (value != null) {
-                    loadData(value);
-                  }
-                }),
-            SizedBox(height: 16),
-            _loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : restaurants.isNotEmpty
-                    ? Expanded(
-                        child: ListView.separated(separatorBuilder: (BuildContext context, int index) {
-                          return SizedBox(height: 10,);
+        body: Padding(
+      padding: EdgeInsets.symmetric(vertical: 34.h, horizontal: 15.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Hi, ${name}',
+            style: GoogleFonts.montserrat(fontSize: 30.sp, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(
+            height: 1.h,
+          ),
+          Text('Craving for Biryani ?', style: GoogleFonts.inter(fontSize: 20.sp, color: Color.fromRGBO(136, 136, 136, 100))),
+          SizedBox(height: 16),
+          CustomDropdown.search(
+              decoration: CustomDropdownDecoration(closedFillColor: Colors.blue[600], expandedFillColor: Colors.white, hintStyle: TextStyle(color: Colors.white)),
+              items: Area_list,
+              hintText: "Select Area*",
+              excludeSelected: false,
+              onChanged: (value) {
+                if (value != null) {
+                  loadData(value);
+                }
+              }),
+          SizedBox(height: 16),
+          _loading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : restaurants.isNotEmpty
+                  ? Expanded(
+                      child: ListView.separated(
+                        separatorBuilder: (BuildContext context, int index) {
+                          return SizedBox(
+                            height: 10,
+                          );
                         },
-                          itemCount: restaurants[0]["fooditems"].where((foodItem) => foodItem["quantity"] > 0).length,
-                          itemBuilder: (BuildContext context, index) {
-                            var foodItems = restaurants[0]["fooditems"].where((foodItem) => foodItem["quantity"] > 0).toList();
+                        itemCount: restaurants[0]["fooditems"].where((foodItem) {
+                          // Ensure quantity is a number and greater than 0
+                          return foodItem["quantity"] != null && (foodItem["quantity"] is int || foodItem["quantity"] is double) && foodItem["quantity"] > 0;
+                        }).length,
+                        itemBuilder: (BuildContext context, index) {
+                          var foodItems = restaurants[0]["fooditems"].where((foodItem) {
+                            return foodItem["quantity"] != null && (foodItem["quantity"] is int || foodItem["quantity"] is double) && foodItem["quantity"] > 0;
+                          }).toList();
+                          if (index < foodItems.length) {
+                            var foodItem = foodItems[index];
+                            var imageFileURL = foodItem["imageFileURL"];
 
-                            if (index < foodItems.length) {
-                              var foodItem = foodItems[index];
-                              var imageFileURL = foodItem["imageFileURL"];
+                            var shopName = foodItem["shopname"];
+                            var shopNumber = foodItem["shopmobile"];
+                            var shopAddress = foodItem["shopaddress"];
+                            var account = foodItem["account"];
+                            var itemDescription = foodItem["itemDescription"];
+                            var dateofproduce = foodItem["dateofproduce"];
+                            var quantity = foodItem["quantity"];
+                            var userid = foodItem["userid"];
+                            var shopprice = foodItem["shopprice"];
 
-                              var shopName = foodItem["shopname"];
-                              var shopNumber = foodItem["shopmobile"];
-                              var shopAddress = foodItem["shopaddress"];
-                              var account = foodItem["account"];
-                              var itemDescription = foodItem["itemDescription"];
-                              var dateofproduce = foodItem["dateofproduce"];
-                              var price = foodItem["price"] ?? 0;
-                              var quantity = foodItem["quantity"] ;
-                              var userid = foodItem["userid"];
-                              var shopprice = foodItem["shopprice"];
-      
-                              return GestureDetector(
-                                  onTap: () {
-                                    print(userid);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => FoodDetailCard(
-                                                  area: selectedArea,
-                                                  shopNumber: shopNumber,
-                                                  shopName: shopName,
-                                                  shopAddress: shopAddress,
-                                                  itemDescription: itemDescription,
-                                                  imageUrl: imageFileURL,
-                                                  price: price,
-                                                  account: account,
-                                                  quantity: quantity,
-                                                  userid: userid,
-                                                  shopprice: shopprice,
-                                                )));
-                                  },
-                                  child: _foodwidget(imageURL: imageFileURL, title: itemDescription, price: price.toString()));  
-
-                            }
-                            return null;
-                          },
-                        ),
-                      )
-                    : SizedBox()
-          ],
-        ),
-      ) 
-    );
+                            return GestureDetector(
+                                onTap: () {
+                                  print(userid);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => FoodDetailCard(
+                                                area: selectedArea,
+                                                shopNumber: shopNumber,
+                                                shopName: shopName,
+                                                shopAddress: shopAddress,
+                                                itemDescription: itemDescription,
+                                                imageUrl: imageFileURL,
+                                                account: account,
+                                                quantity: quantity,
+                                                userid: userid,
+                                                shopprice: shopprice,
+                                              )));
+                                },
+                                child: _foodwidget(imageURL: imageFileURL, title: itemDescription, price: shopprice.toString()));
+                          }
+                          return null;
+                        },
+                      ),
+                    )
+                  : SizedBox()
+        ],
+      ),
+    ));
   }
 }
 
@@ -216,11 +216,10 @@ class _foodwidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(borderRadius: BorderRadius.circular(30),
-
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(30),
       child: Card(
         elevation: 4.0,
-       
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -246,11 +245,7 @@ class _foodwidget extends StatelessWidget {
                   SizedBox(height: 2),
                   Text(
                     '\$${price}',
-                    style: TextStyle(fontFamily: "Metropolis",
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green[800]
-                    ),
+                    style: TextStyle(fontFamily: "Metropolis", fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.green[800]),
                   ),
                 ],
               ),

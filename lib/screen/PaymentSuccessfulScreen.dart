@@ -1,24 +1,30 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:foodex/bottomNavigationScreen.dart';
+import 'package:foodex/screen/getfood.dart';
 import 'package:foodex/widgets/HomeScreen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final String transactionId;
   final String date;
-  final double nominal;
-  final double foodexCommission;
+  final double totalWithFee;
   final String status;
-  final double total;
   final int quantity;
   final String itemDescription;
   final int shopprice;
+ 
 
-  const PaymentSuccessScreen({Key? key, required this.transactionId, required this.date, required this.nominal, required this.status, required this.total, required this.quantity, required this.itemDescription, required this.shopprice})
-      : foodexCommission = (nominal * 0.07),
+   PaymentSuccessScreen({Key? key, required this.transactionId, required this.date, required this.totalWithFee, required this.status, required this.quantity, required this.itemDescription, required this.shopprice,})
+      : 
         super(key: key);
 
+int calculateFoodexCommission() {
+  return (totalWithFee - shopprice).round();
+}
   @override
   Widget build(BuildContext context) {
+    int foodexCommission = calculateFoodexCommission();
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
@@ -62,7 +68,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Successfully paid \₹${nominal.toStringAsFixed(2)}',
+                'Successfully paid \₹${totalWithFee.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -127,7 +133,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\₹${total.toStringAsFixed(2)}',
+                      '\₹${totalWithFee.toStringAsFixed(2)}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -148,7 +154,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => BottomNavigationScreen()),
+                        MaterialPageRoute(builder: (context) => Getfood()),
                         (route) => false, // Removes all previous routes
                       );
                     },

@@ -20,7 +20,8 @@ class RazorpayOrderState {
     this.itemDescription,
     this.area,
     this.userid,
-    this.shopprice
+    this.shopprice,
+
   });
 
 
@@ -34,6 +35,7 @@ RazorpayOrderState copyWith({
     String? area,
     String? userid,
     int? shopprice,
+
 }) {
    return RazorpayOrderState(
       orderId: orderId ?? this.orderId,
@@ -44,7 +46,7 @@ RazorpayOrderState copyWith({
       itemDescription: itemDescription ?? this.itemDescription,
       area: area ?? this.area,
       userid: userid ?? this.userid,
-      shopprice: shopprice ?? this.shopprice
+      shopprice: shopprice ?? this.shopprice,
     );
 }
 

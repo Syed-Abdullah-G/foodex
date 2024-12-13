@@ -3,20 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodex/models/paymentFood.dart';
 import 'package:foodex/providers/payment_provider.dart';
 import 'package:foodex/razorpayService.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
+import 'package:intl/intl.dart';
 
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class FoodDetailCard extends ConsumerStatefulWidget {
-  FoodDetailCard({required this.area, required this.account, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrl, required this.price, required this.quantity, required this.userid, required this.shopprice});
+  FoodDetailCard({required this.area, required this.account, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrl, required this.quantity, required this.userid, required this.shopprice});
 
   String area;
   String account; //used
   String shopNumber;
   String shopName; //used
   String shopAddress; //used
-  String itemDescription; 
+  String itemDescription;
   String imageUrl; //used
-  int price; //used
   int quantity; // used
   String userid;
   int shopprice;
@@ -28,17 +30,15 @@ class FoodDetailCard extends ConsumerStatefulWidget {
 class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
   late int quantityController = 0;
   int totalAmount = 0;
-    final _razorpay = Razorpay();
+  final _razorpay = Razorpay();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     quantityController = 1;
-    totalAmount = widget.price;
-   
+    totalAmount = (widget.shopprice * quantityController * 1.07).round(); // calculate initital total with 7%
   }
-
 
   @override
   void dispose() {
@@ -47,12 +47,8 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
     _razorpay.clear(); // Removes all listeners
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    
-    
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
@@ -131,9 +127,9 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                                     if (quantityController > 1) {
                                       setState(() {
                                         quantityController--;
+                      totalAmount = (widget.shopprice * quantityController * 1.07).round(); // Update total with 7%
                                       });
                                     }
-                                    totalAmount = widget.price * quantityController;
                                   },
                                   color: Colors.grey[600],
                                 ),
@@ -147,9 +143,10 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                                     if (quantityController < widget.quantity) {
                                       setState(() {
                                         quantityController++;
+                                                              totalAmount = (widget.shopprice * quantityController * 1.07).round(); // Update total with 7%
+
                                       });
                                     }
-                                    totalAmount = widget.price * quantityController;
                                   },
                                   color: Colors.black,
                                 ),
@@ -206,7 +203,7 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                                     ),
                               ),
                               Text(
-                                '\₹${(widget.price * quantityController).toStringAsFixed(2)}',
+                                '\₹${(totalAmount).toStringAsFixed(2)}',
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -216,13 +213,9 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                           ElevatedButton(
                             onPressed: () async {
                               try {
-                                print("jsdfjdjkljasfjsrfijsefierjfiewjhrifejrfesjriejior");
-                                print(widget.userid);
-
-
                                 // final userData = await RazorpayService().processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7","fresh and tasty","Ram Kumar", widget.shopName);
-                            final razorpayService = RazorpayService(ref, context);
-                            razorpayService.processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7",widget.shopName,widget.shopAddress, widget.shopName, quantityController, widget.itemDescription, widget.area,widget.userid, widget.shopprice );
+                                final razorpayService = RazorpayService(ref, context);
+                                razorpayService.processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7", widget.shopName, widget.shopAddress, widget.shopName, quantityController, widget.itemDescription, widget.area, widget.userid, widget.shopprice);
                               } catch (e) {
                                 print("Payment initiation failed: $e");
                                 if (!context.mounted) return;

@@ -152,28 +152,17 @@ class RazorpayService {
       }
     }
 
-//  await db
-//                 .collection(paymentData.area!)
-//                 .doc(paymentData.userid!).update(
-//                   {
-//                     "quantity": paymentData.quantitypurchased
-//                   }
-//                 );
 
-
-                // .set({"fooditems": FieldValue.arrayUnion([foodMap])},SetOptions(merge: true));
-    
 
         Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => PaymentSuccessScreen(
           transactionId: response.paymentId ?? 'N/A',
           date: formattedDate,
-          nominal: paymentData.amount != null ? paymentData.amount! / 100.0 : 0.0,
+          totalWithFee: paymentData.amount != null ? paymentData.amount! / 100.0 : 0.0,
           status: 'Success',
-          total: paymentData.amount != null ? paymentData.amount! / 100.0 : 0.0,
           quantity: paymentData.quantitypurchased!, itemDescription: paymentData.itemDescription!, shopprice: paymentData.shopprice!,
-        ),
+   ),
       ),
       (route) => false,
     );

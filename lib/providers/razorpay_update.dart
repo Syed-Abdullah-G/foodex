@@ -18,7 +18,8 @@ class RazorpayOrderNotifier extends StateNotifier<RazorpayOrderState> {
       itemDescription: itemdescription,
       area: area,
       userid: userid,
-      shopprice: shopprice
+      shopprice: shopprice,
+
     );
   }
 

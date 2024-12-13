@@ -10,10 +10,9 @@ class FoodDetails {
     required this.itemDescription,
     required this.area,
     required this.imageFileURL,
-    required this.price,
     required this.quantity,
     required this.userid,
-    required this.shopprice
+    required this.shopprice,
   });
 
 
@@ -28,7 +27,6 @@ class FoodDetails {
    String itemDescription;
    String area;
    String imageFileURL;
-   int price;
    int quantity;
    String userid;
    int shopprice;
@@ -44,10 +42,9 @@ class FoodDetails {
       "dateofproduce": dateofproduce,
       "itemDescription":itemDescription,
       "imageFileURL": imageFileURL,
-      "price": price,
       "quantity": quantity,
       "userid": userid,
-      "shopprice":shopprice
+      "shopprice":shopprice,
     };
    }
 

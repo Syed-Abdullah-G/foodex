@@ -11,6 +11,7 @@ import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:foodex/constants/area_names.dart';
 import 'package:foodex/models/areaModel.dart';
 import 'package:foodex/models/foodDetails.dart';
+import 'package:foodex/widgets/HomeScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -135,7 +136,7 @@ int wholePrice = price.round();
                 dateofproduce:
                     selectedDate.toLocal().toString().split(' ')[0],
                 itemDescription: descriptionController.text,
-                area: areaName!, imageFileURL: imageDownloadUrl, price: wholePrice, account: widget.account, quantity: int.parse(quantityController.text) ,userid: widget.userid, shopprice: int.parse(priceController.text));
+                area: areaName!, imageFileURL: imageDownloadUrl,account: widget.account, quantity: int.parse(quantityController.text) ,userid: widget.userid, shopprice: int.parse(priceController.text));
             Map<String, dynamic> foodMap = foodDetail.toJson();
 
             await db
