@@ -14,6 +14,7 @@ import 'package:foodex/bottomNavigationScreen.dart';
 import 'package:foodex/models/consumerDetails.dart';
 import 'package:foodex/models/userDetails.dart';
 import 'package:foodex/screen/getfood.dart';
+import 'package:foodex/widgets/consumerNavigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -153,14 +154,14 @@ final userid =  FirebaseAuth.instance.currentUser!.email;
   DocumentSnapshot snapshot = await accountExists.get();
 
   if (snapshot.exists) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const Getfood()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const consumerNavigationScreen()));
     return;
   }
   else {
-         final userdetails = Consumerdetails(name: name, mobile: mobile, area: area, uid: userid!, email: FirebaseAuth.instance.currentUser!.email!);
+         final userdetails = Consumerdetails(name: name, mobile: mobile, area: area, uid: userid!, email: FirebaseAuth.instance.currentUser!.email!, orders: "");
     Map<String, String> userMap = userdetails.toJson();
     await db.collection("consumer").doc(userid).set(userMap);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const Getfood()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const consumerNavigationScreen()));
   }
     } catch (e) {
       if (mounted) {

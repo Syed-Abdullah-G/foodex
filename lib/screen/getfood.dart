@@ -8,13 +8,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_side_menu/flutter_side_menu.dart';
 import 'package:foodex/constants/area_names.dart';
 import 'package:foodex/constants/colors.dart';
 import 'package:foodex/getDetails.dart';
 import 'package:foodex/login.dart';
 import 'package:foodex/screen/foodDescription.dart';
+import 'package:foodex/widgets/HomeScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sidebarx/sidebarx.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 final db = FirebaseFirestore.instance;
@@ -37,6 +40,9 @@ class _GetfoodPageState extends State<Getfood> {
   String email = "";
   String uid = "";
   Future<dynamic>? dataFuture;
+
+
+
 
   Future<void> loadUserData() async {
     final docRef = db.collection("consumer").doc(userid);
@@ -81,25 +87,42 @@ class _GetfoodPageState extends State<Getfood> {
     }
   }
 
-  // Future getUserData() async {
-  //   setState(() {
-  //     _loading = true;
-  //   });
-  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     consumerName = toTitleCase(sharedPreferences.getString("consumername")!);
-  //     consumerMobile = sharedPreferences.getString("consumermobile")!;
-  //     consumerArea = sharedPreferences.getString("consumerarea")!;
-  //     _loading = false;
-  //   });
-  // }
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Log Out'),
+          content: const Text('Are you sure you want to log out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Add your log out functionality here
+                _logout();
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Log Out'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  // String toTitleCase(String text) {
-  //   return text.split(' ').map((word) {
-  //     if (word.isEmpty) return '';
-  //     return word[0].toUpperCase() + word.substring(1).toLowerCase();
-  //   }).join(' ');
-  // }
+  void _logout() async {
+    // Implement your log out logic here
+    // For example, clear user data, navigate to login screen, etc.
+    await FirebaseAuth.instance.signOut();
+    print("User  logged out");
+  }
+
+
 
   @override
   void initState() {
@@ -112,22 +135,18 @@ class _GetfoodPageState extends State<Getfood> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
         body: Padding(
-      padding: EdgeInsets.symmetric(vertical: 34.h, horizontal: 15.w),
+      padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Hi, ${name}',
-            style: GoogleFonts.montserrat(fontSize: 30.sp, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            height: 1.h,
-          ),
-          Text('Craving for Biryani ?', style: GoogleFonts.inter(fontSize: 20.sp, color: Color.fromRGBO(136, 136, 136, 100))),
-          SizedBox(height: 16),
+         
+         
+          consumerCard(consumerName: name, consumerMobile: mobile, consumerArea: area),
+          SizedBox(height: 10.h,),
           CustomDropdown.search(
-              decoration: CustomDropdownDecoration(closedFillColor: Colors.blue[600], expandedFillColor: Colors.white, hintStyle: TextStyle(color: Colors.white)),
+              decoration: CustomDropdownDecoration(closedFillColor: Colors.black, expandedFillColor: Colors.white, hintStyle: TextStyle(color: Colors.white),prefixIcon: Icon(Icons.location_on_outlined,color: Colors.white,)),
               items: Area_list,
               hintText: "Select Area*",
               excludeSelected: false,
@@ -136,7 +155,6 @@ class _GetfoodPageState extends State<Getfood> {
                   loadData(value);
                 }
               }),
-          SizedBox(height: 16),
           _loading
               ? Center(
                   child: CircularProgressIndicator(),
@@ -161,7 +179,7 @@ class _GetfoodPageState extends State<Getfood> {
                             var foodItem = foodItems[index];
                             var imageFileURL = foodItem["imageFileURL"];
 
-                            var shopName = foodItem["shopname"];
+                            var consumerName = foodItem["shopname"];
                             var shopNumber = foodItem["shopmobile"];
                             var shopAddress = foodItem["shopaddress"];
                             var account = foodItem["account"];
@@ -180,7 +198,7 @@ class _GetfoodPageState extends State<Getfood> {
                                           builder: (context) => FoodDetailCard(
                                                 area: selectedArea,
                                                 shopNumber: shopNumber,
-                                                shopName: shopName,
+                                                shopName: consumerName,
                                                 shopAddress: shopAddress,
                                                 itemDescription: itemDescription,
                                                 imageUrl: imageFileURL,
@@ -251,6 +269,82 @@ class _foodwidget extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class consumerCard extends StatelessWidget {
+  final String consumerName;
+  final String consumerMobile;
+  final String consumerArea;
+
+  consumerCard({
+    required this.consumerName,
+    required this.consumerMobile,
+    required this.consumerArea,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
+      gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color.fromARGB(255, 93, 139, 234), Color(0xFF755EE8), Colors.purpleAccent,Colors.amber,],
+          ),
+    ),
+      child: Card(
+        elevation: 8.0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+        color: Colors.white,
+        margin: EdgeInsets.all(3.0.r),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                consumerName,
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Row(
+                children: [
+                  Icon(Icons.phone, color: Colors.black54),
+                  SizedBox(width: 8.0),
+                  Text(
+                    consumerMobile,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.green[600],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8.0),
+              Row(
+                children: [
+                  Icon(Icons.map, color: Colors.black54),
+                  SizedBox(width: 8.0),
+                  Text(
+                    consumerArea,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.green[600],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

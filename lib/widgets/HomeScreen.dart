@@ -100,6 +100,54 @@ class _UploadfoodState extends State<HomeScreen> {
     print("User  logged out");
   }
 
+
+  void _deleteFoodItem(Map<String, dynamic> itemToDelete) async {
+  try {
+    // Remove the specific item from the fooditems array
+    await db.collection(areaName).doc(widget.userid).update({
+      'fooditems': FieldValue.arrayRemove([itemToDelete])
+    });
+
+    // Update the local state
+    setState(() {
+      // Remove the item from the orders list
+      orders.removeWhere((item) => 
+        item['itemDescription'] == itemToDelete['itemDescription'] &&
+        item['dateofproduce'] == itemToDelete['dateofproduce'] &&
+        item['shopprice'] == itemToDelete['shopprice']
+      );
+
+      // Refresh the order lists
+      _updateOrderLists();
+    });
+
+    // Optional: Show a snackbar to confirm deletion
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Item deleted successfully')),
+    );
+  } catch (e) {
+    print("Error deleting item: $e");
+    
+    // Optional: Show an error snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to delete item')),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -263,6 +311,7 @@ class _UploadfoodState extends State<HomeScreen> {
                                                 dateOfProduce: dateofproduce,
                                                 quantity: quantity,
                                                 price: price,
+                                                onDelete: () => _deleteFoodItem(item),
                                               );
                                             },
                                             childCount: completedOrders.length,
@@ -326,7 +375,7 @@ class ShopCard extends StatelessWidget {
       elevation: 8.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       color: Colors.white,
-      margin: EdgeInsets.all(16.0),
+      margin: EdgeInsets.all(7.0.r),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -398,6 +447,7 @@ class FoodItemCard extends StatelessWidget {
   final String dateOfProduce;
   final int quantity;
   final int price;
+  final VoidCallback onDelete;
 
   const FoodItemCard({
     Key? key,
@@ -406,74 +456,82 @@ class FoodItemCard extends StatelessWidget {
     required this.dateOfProduce,
     required this.quantity,
     required this.price,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Card(color: Colors.white,
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Cached Network Image for efficient image loading
-            CachedNetworkImage(
-              imageUrl: imageUrl,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(Icons.food_bank),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    itemName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Date: $dateOfProduce',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      Text(
-                        'Qty: $quantity',
-                        style: TextStyle(
-                          color: Colors.green[700],
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Price: \₹$price',
-                    style: TextStyle(
-                      color: Colors.green[800],
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+      child: Stack(
+        children:[ Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Cached Network Image for efficient image loading
+              CachedNetworkImage(
+                imageUrl: imageUrl,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.food_bank),
               ),
-            ),
-          ],
-        ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      itemName,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Date: $dateOfProduce',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        Text(
+                          'Qty: $quantity',
+                          style: TextStyle(
+                            color: Colors.green[700],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Price: \₹$price',
+                      style: TextStyle(
+                        color: Colors.green[800],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ), 
+        Align(
+          alignment: Alignment.topRight,
+          child: Padding(padding: EdgeInsets.all(0),
+          child: IconButton(onPressed: onDelete, icon: Icon(Icons.delete, color: Colors.red,)),),
+        )]
       ),
     );
   }

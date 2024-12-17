@@ -8,7 +8,7 @@ class RazorpayOrderNotifier extends StateNotifier<RazorpayOrderState> {
   RazorpayOrderNotifier() : super(RazorpayOrderState());
 
   // Method to update order details
-  void updateOrderDetails(Map<String, dynamic> orderResponse, int quantitypurchased, String itemdescription, String area, String userid, int shopprice) {
+  void updateOrderDetails(Map<String, dynamic> orderResponse, int quantitypurchased, String itemdescription, String area, String userid, int shopprice, String shopname) {
     state = RazorpayOrderState(
       orderId: orderResponse['id'],
       amount: orderResponse['amount'],
@@ -19,6 +19,7 @@ class RazorpayOrderNotifier extends StateNotifier<RazorpayOrderState> {
       area: area,
       userid: userid,
       shopprice: shopprice,
+      shopname: shopname
 
     );
   }

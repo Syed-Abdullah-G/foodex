@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:foodex/bottomNavigationScreen.dart';
 import 'package:foodex/screen/getfood.dart';
 import 'package:foodex/widgets/HomeScreen.dart';
+import 'package:foodex/widgets/consumerNavigation.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final String transactionId;
@@ -154,7 +155,7 @@ int calculateFoodexCommission() {
                   child: TextButton(
                     onPressed: () {
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Getfood()),
+                        MaterialPageRoute(builder: (context) => consumerNavigationScreen()),
                         (route) => false, // Removes all previous routes
                       );
                     },

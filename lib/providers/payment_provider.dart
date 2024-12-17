@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:foodex/models/ordersModel.dart';
 import 'package:foodex/providers/razorpay_update.dart';
 import 'package:foodex/screen/PaymentSuccessfulScreen.dart';
 import 'package:http/http.dart' as http;
@@ -64,7 +65,7 @@ class RazorpayService {
       if (response.statusCode == 200) {
         final orderResponse = jsonDecode(response.body);
         
-        ref.read(razorpayOrderProvider.notifier).updateOrderDetails(orderResponse,0,"","", "",0);
+        ref.read(razorpayOrderProvider.notifier).updateOrderDetails(orderResponse,0,"","", "",0,"");
         
         return orderResponse;
       } else {
@@ -98,13 +99,13 @@ class RazorpayService {
     }
   }
 
-  Future<void> processOrder(int amount, String Acc1, String Acc2, String Acc1_branch, String address, String shopName, int quantitypurchased, String itemdescription, String area, String userID, int shopprice) async {
+  Future<void> processOrder(int amount, String Acc1, String Acc2, String Acc1_branch, String address, String shopName, int quantitypurchased, String itemdescription, String area, String userID, int shopprice, String shopname) async {
     try {
           final paymentData = ref.read(razorpayOrderProvider.notifier);
 
 
       final orderResponse = await createOrder(amount, Acc1, Acc2, Acc1_branch, address);
-      paymentData.updateOrderDetails(orderResponse, quantitypurchased, itemdescription,area, userID, shopprice);
+      paymentData.updateOrderDetails(orderResponse, quantitypurchased, itemdescription,area, userID, shopprice, shopname);
       await initiatePayment(orderResponse["amount"], orderResponse["id"]);
     } catch (e) {
       print('initiate payment failed: $e');
@@ -151,6 +152,13 @@ class RazorpayService {
         });
       }
     }
+
+    final orderModel  = OrdersModel(dateOfProduce: formattedDate, itemDescription: paymentData.itemDescription!, quantity: paymentData.quantitypurchased.toString(), shopname: paymentData.shopname!, totalPrice:  paymentData.amount.toString());
+    Map<String, dynamic> ordersMap = orderModel.toJson();
+
+    await db.collection("consumer").doc(paymentData.userid).update({
+      "orders": FieldValue.arrayUnion([ordersMap]),
+    });
 
 
 

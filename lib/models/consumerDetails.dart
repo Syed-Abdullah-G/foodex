@@ -7,6 +7,7 @@ class Consumerdetails {
     required this.uid,
     required this.area,
     required this.email,
+    required this.orders,
   });
 
   String name;
@@ -14,6 +15,7 @@ class Consumerdetails {
   String area;
   String uid;
   String email;
+  String orders;
 
   Map<String, String> toJson() {
     return {
@@ -22,6 +24,7 @@ class Consumerdetails {
       "area": area,
       "uid": uid,
       "email": email,
+      "orders": orders,
     };
   }
 }
