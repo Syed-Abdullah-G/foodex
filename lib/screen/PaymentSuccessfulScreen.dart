@@ -1,7 +1,6 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:foodex/bottomNavigationScreen.dart';
 import 'package:foodex/screen/getfood.dart';
 import 'package:foodex/widgets/HomeScreen.dart';
 import 'package:foodex/widgets/consumerNavigation.dart';
@@ -21,7 +20,7 @@ class PaymentSuccessScreen extends StatelessWidget {
         super(key: key);
 
 int calculateFoodexCommission() {
-  return (totalWithFee - shopprice).round();
+  return (totalWithFee - (shopprice*quantity)).round();
 }
   @override
   Widget build(BuildContext context) {

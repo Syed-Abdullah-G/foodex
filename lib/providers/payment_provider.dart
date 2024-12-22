@@ -153,7 +153,7 @@ class RazorpayService {
       }
     }
 
-    final orderModel  = OrdersModel(dateOfProduce: formattedDate, itemDescription: paymentData.itemDescription!, quantity: paymentData.quantitypurchased.toString(), shopname: paymentData.shopname!, totalPrice:  paymentData.amount.toString());
+    final orderModel  = OrdersModel(dateOfProduce: formattedDate, itemDescription: paymentData.itemDescription!, quantity: paymentData.quantitypurchased.toString(), shopname: paymentData.shopname!, totalPrice:  (paymentData.amount!/100).toString());
     Map<String, dynamic> ordersMap = orderModel.toJson();
 
     await db.collection("consumer").doc(paymentData.userid).update({

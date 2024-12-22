@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/constants/colors.dart';
 import 'package:foodex/event_details.dart';
+import 'package:foodex/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final db = FirebaseFirestore.instance;
@@ -98,6 +99,8 @@ class _UploadfoodState extends State<HomeScreen> {
     // For example, clear user data, navigate to login screen, etc.
     await FirebaseAuth.instance.signOut();
     print("User  logged out");
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+
   }
 
 

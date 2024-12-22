@@ -134,7 +134,7 @@ class _GetfoodPageState extends State<Getfood> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: Colors.white,
       
         body: Padding(
       padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
@@ -146,7 +146,7 @@ class _GetfoodPageState extends State<Getfood> {
           consumerCard(consumerName: name, consumerMobile: mobile, consumerArea: area),
           SizedBox(height: 10.h,),
           CustomDropdown.search(
-              decoration: CustomDropdownDecoration(closedFillColor: Colors.black, expandedFillColor: Colors.white, hintStyle: TextStyle(color: Colors.white),prefixIcon: Icon(Icons.location_on_outlined,color: Colors.white,)),
+              decoration: CustomDropdownDecoration(closedFillColor: Colors.black,headerStyle: TextStyle(color: Colors.white, fontSize: 15.sp),expandedFillColor: Colors.blueGrey[50], hintStyle: TextStyle(color: Colors.white),prefixIcon: Icon(Icons.location_on_outlined,color: Colors.white,)),
               items: Area_list,
               hintText: "Select Area*",
               excludeSelected: false,
@@ -154,7 +154,7 @@ class _GetfoodPageState extends State<Getfood> {
                 if (value != null) {
                   loadData(value);
                 }
-              }),
+              }),SizedBox(height: 10.h,),
           _loading
               ? Center(
                   child: CircularProgressIndicator(),

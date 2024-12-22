@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 final db = FirebaseFirestore.instance;
@@ -42,32 +43,107 @@ class _usersOrdersState extends State<usersOrders> {
   }
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
-      appBar: AppBar(
-        title: const Text('Orders'),
-      ),
+   return Scaffold(backgroundColor: Colors.white,
       body: orders.isEmpty
-          ? const Center(
-              child: Text('No orders found'),
+          ?  Center(
+              child: Text('No orders found',style: TextStyle(
+                fontSize: 18.sp,color: Colors.grey
+              ),),
             )
           : ListView.builder(
+            padding: EdgeInsets.all(10.r),
               itemCount: orders.length,
               itemBuilder: (context, index) {
                 final order = orders[index];
-                return ListTile(
-                  title: Text(order['itemdescription']),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Quantity: ${order['quantity']}'),
-                      Text('Shop: ${order['shopname']}'),
-                      Text('Price: \₹${order['totalprice']}'),
-                      Text('Date: ${order['dateofproduce']}'),
-                    ],
-                  ),
-                );
+                return _buildOrderCard(order);
               },
             ),
     );
   }
 }
+
+  Widget _buildOrderCard(Map<String, dynamic> order) {
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.grey.shade100],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Item Description
+              Text(
+                order['itemdescription'],
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Order Details
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow(
+                          Icons.store, 'Shop: ${order['shopname']}'),
+                      _buildDetailRow(
+                          Icons.shopping_basket, 'Quantity: ${order['quantity']}'),
+                      _buildDetailRow(
+                          Icons.currency_rupee, 'Price: ₹${order['totalprice']}'),
+                      _buildDetailRow(
+                          Icons.calendar_today, 'Date: ${order['dateofproduce']}'),
+                    ],
+                  ),
+                  // Optional: Add an order status icon
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade100,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Colors.blue),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }

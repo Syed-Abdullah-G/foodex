@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/login.dart';
+import 'package:foodex/screen/contact.dart';
 import 'package:foodex/screen/getfood.dart';
 import 'package:foodex/screen/userOrders.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,7 +21,15 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
   static const List<Widget> _widgetOptions = <Widget>[
    Getfood(),
    usersOrders(),
+   ContactUsPage(),
   ];
+
+    static const List<String> _screenTitles = [
+    'Get Food',
+    'My Orders',
+    'Contact Us',
+  ];
+
 
   void _onItemTapped(int index) {
     setState(() {
@@ -31,12 +40,19 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home"),
+      appBar: AppBar(backgroundColor: Colors.white,
+        title: Text(
+          _screenTitles[_selectedIndex],
+          style: GoogleFonts.poppins(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+
         leading: Builder(
           builder: (context) {
             return IconButton(
-              icon: const Icon(Icons.menu),
+              icon: const Icon(Icons.menu,size: 30),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
@@ -57,12 +73,12 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
           children: [
              DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.black,
               ),
-              child: Center(child: Text('Foodex',style: GoogleFonts.metrophobic(fontWeight: FontWeight.w300,fontSize: 30.sp),)),
+              child: Center(child: Image.asset("assets/menu_graphic/menu.png")),
             ),
             ListTile(
-              title: const Text('Home'),
+              title: Text('Home',style: GoogleFonts.poppins(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 20.sp),),
               selected: _selectedIndex == 0,
               onTap: () {
                 // Update the state of the app
@@ -72,7 +88,7 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
               },
             ),
             ListTile(
-              title: const Text('My Orders'),
+              title:  Text('My Orders',style: GoogleFonts.poppins(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 20.sp)),
               selected: _selectedIndex == 1,
               onTap: () {
                 // Update the state of the app
@@ -82,7 +98,7 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
               },
             ),
             ListTile(
-              title: const Text('School'),
+              title:  Text('Contact Us',style: GoogleFonts.poppins(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 20.sp)),
               selected: _selectedIndex == 2,
               onTap: () {
                 // Update the state of the app

@@ -10,10 +10,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/constants/area_names.dart';
 import 'package:foodex/constants/colors.dart';
 import 'package:foodex/getDetails.dart';
-import 'package:foodex/bottomNavigationScreen.dart';
 import 'package:foodex/models/consumerDetails.dart';
 import 'package:foodex/models/userDetails.dart';
+import 'package:foodex/screen/alreadyLogin.dart';
 import 'package:foodex/screen/getfood.dart';
+import 'package:foodex/screen/merchantNavigationscreen.dart';
+import 'package:foodex/widgets/HomeScreen.dart';
 import 'package:foodex/widgets/consumerNavigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -85,14 +87,14 @@ class _LoginScreenState extends State<LoginScreen> {
   DocumentSnapshot snapshot = await accountExists.get();
 
   if (snapshot.exists) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomNavigationScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantNavigationScreen()));
   }
   else {
 
        final userdetails = Userdetails(account: account, shopmobilenumber: shopmobilenumber, shopname: shopname, address: address, area: area, accountType: accountType, uid: userid!, email: FirebaseAuth.instance.currentUser!.email!);
     Map<String, String> userMap = userdetails.toJson();
     await db.collection("user").doc(userid).set(userMap);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomNavigationScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantNavigationScreen()));
   }
     } catch (e) {
       if (mounted) {
@@ -214,7 +216,7 @@ return "";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -227,15 +229,13 @@ return "";
               Text(
                 "Sign Up to FoodEx",
                 style: TextStyle(
-                  fontSize: 18.sp,
+                  fontSize: 30.sp,
                   fontWeight: FontWeight.w700,
                   color: darkTextColor,
                 ),
               ),
-              SizedBox(
-                height: 4.h,
-              ),
-              Wrap(
+            
+              Row(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     "Already have an account? ",
@@ -245,14 +245,13 @@ return "";
                       color: lightTextColor,
                     ),
                   ),
-                  Text(
-                    "Login",
-                    style: TextStyle(
+                  TextButton(onPressed: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => existingLogin(),));
+                  }, child: Text("Login", style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
                       color: purpleColor,
-                    ),
-                  ),
+                    ),))
                 ],
               ),
               SizedBox(
@@ -261,7 +260,7 @@ return "";
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  ChoiceChip(
+                  ChoiceChip(backgroundColor: Colors.white,
                     label: Text(
                       'Customer',
                       style: TextStyle(
@@ -276,7 +275,7 @@ return "";
                       });
                     },
                   ),
-                  ChoiceChip(
+                  ChoiceChip(backgroundColor: Colors.white,
                     label: Text(
                       'Shop',
                       style: TextStyle(

@@ -9,14 +9,14 @@ import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 final db = FirebaseFirestore.instance;
 
-class BottomNavigationScreen extends StatefulWidget {
-  const BottomNavigationScreen({super.key});
+class MerchantNavigationScreen extends StatefulWidget {
+  const MerchantNavigationScreen({super.key});
 
   @override
-  State<BottomNavigationScreen> createState() => _BottomNavigationScreenState();
+  State<MerchantNavigationScreen> createState() => _BottomNavigationScreenState();
 }
 
-class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
+class _BottomNavigationScreenState extends State<MerchantNavigationScreen> {
   String account = "";
   String shopnumber = "";
   String shopname = "";
