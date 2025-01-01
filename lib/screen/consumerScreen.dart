@@ -6,6 +6,6 @@ class ConsumerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Getfood();
+    return const Getfood();
   }
 }

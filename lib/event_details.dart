@@ -1,17 +1,8 @@
-import 'dart:ffi';
-import 'dart:math';
 
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:drop_down_list/drop_down_list.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
-import 'package:foodex/constants/area_names.dart';
-import 'package:foodex/models/areaModel.dart';
 import 'package:foodex/models/foodDetails.dart';
-import 'package:foodex/widgets/HomeScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -22,7 +13,7 @@ final storage = FirebaseStorage.instance.ref();
 
 
 class event_details extends StatefulWidget {
-    event_details({
+    event_details({super.key, 
     required this.shopname,
     required this.account,
     required this.shopnumber,
@@ -115,7 +106,7 @@ class _AddExpenseScreenState extends State<event_details> {
     print(widget.userid);
 
                 // creating reference to the cloud storage
-                final reference = storage.child(areaName!).child("${widget.shopname}/${imageFile.path}.png");
+                final reference = storage.child(areaName).child("${widget.shopname}/${imageFile.path}.png");
                 // uploading the file to storage
                   await reference.putFile(imageFile);
                 // obtaining download url of the image
@@ -136,11 +127,11 @@ int wholePrice = price.round();
                 dateofproduce:
                     selectedDate.toLocal().toString().split(' ')[0],
                 itemDescription: descriptionController.text,
-                area: areaName!, imageFileURL: imageDownloadUrl,account: widget.account, quantity: int.parse(quantityController.text) ,userid: widget.userid, shopprice: int.parse(priceController.text));
+                area: areaName, imageFileURL: imageDownloadUrl,account: widget.account, quantity: int.parse(quantityController.text) ,userid: widget.userid, shopprice: int.parse(priceController.text));
             Map<String, dynamic> foodMap = foodDetail.toJson();
 
             await db
-                .collection(areaName!)
+                .collection(areaName)
                 .doc(widget.userid)
                 .set({"fooditems": FieldValue.arrayUnion([foodMap])},SetOptions(merge: true));
           
@@ -179,7 +170,7 @@ SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(resizeToAvoidBottomInset: true,
       appBar: AppBar(
         leading: const BackButton(),
         title: const Text('Post Food'),
@@ -191,196 +182,198 @@ SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              const Text(
-                'Area*',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                const Text(
+                  'Area*',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius:  BorderRadius.circular(4),
-                ), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Text(areaName),
-              ),
-
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                'Date of Produce*',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () => _selectDate(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.calendar_today, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${selectedDate.toLocal()}'.split(' ')[0],
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+                    borderRadius:  BorderRadius.circular(4),
+                  ), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Text(areaName),
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Item Description*',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
+            
+                const SizedBox(
+                  height: 8,
                 ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                maxLines: null,
-                controller: descriptionController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: InputBorder.none,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              const Text("Price*", style: TextStyle(
-                fontSize: 14, color: Colors.black87,
-              ),),
-              const SizedBox(height: 8,),
-              TextFormField(controller: priceController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
-                ),validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter a price";
-                  } 
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16,),
-
-              const Text("Total Quantity", style: TextStyle(
-                fontSize: 14, color: Colors.black87,
-              ),),
-              const SizedBox(height: 8,),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: quantityController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
-                ), validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Please enter quantity";
-                    
-                  }
-
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16,),
-              
-              const Text(
-                'File attachment*',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
-              ),
-             
-                 (_imageFile != null) ?
-                 Image.file(_imageFile!,
-                 height: 200,
-                 fit: BoxFit.cover) 
-                  : const SizedBox(),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: _showImagePickerOptions,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Choose Image/ Take Photo',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Icon(Icons.attach_file, size: 20),
-                    ],
+                const Text(
+                  'Date of Produce*',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate() && _imageFile !=null) {
-                      setState(() {
-                        _isloading = true;
-                      });
-                      //await call uploading logic here
-                      await _createPost(_imageFile!);
-                     
-                      
-                    } 
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black87,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () => _selectDate(context),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(4),
                     ),
-                  ),
-                  child:  _isloading ? const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: SizedBox(
-                              height: 20,
-                              width: 20,
-                             
-                              child: CircularProgressIndicator(color: Colors.white,),
-                            ),
-                  ):  const Text(
-                    'Submit',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.calendar_today, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${selectedDate.toLocal()}'.split(' ')[0],
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                const Text(
+                  'Item Description*',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  maxLines: null,
+                  controller: descriptionController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    border: InputBorder.none,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                ),
+                const SizedBox(height: 16),
+            
+                const Text("Price*", style: TextStyle(
+                  fontSize: 14, color: Colors.black87,
+                ),),
+                const SizedBox(height: 8,),
+                TextFormField(controller: priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+                  ),validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter a price";
+                    } 
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16,),
+            
+                const Text("Total Quantity", style: TextStyle(
+                  fontSize: 14, color: Colors.black87,
+                ),),
+                const SizedBox(height: 8,),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: quantityController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+                  ), validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter quantity";
+                      
+                    }
+            
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16,),
+                
+                const Text(
+                  'File attachment*',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                ),
+               
+                   (_imageFile != null) ?
+                   Image.file(_imageFile!,
+                   height: 200,
+                   fit: BoxFit.cover) 
+                    : const SizedBox(),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: _showImagePickerOptions,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Choose Image/ Take Photo',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Icon(Icons.attach_file, size: 20),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate() && _imageFile !=null) {
+                        setState(() {
+                          _isloading = true;
+                        });
+                        //await call uploading logic here
+                        await _createPost(_imageFile!);
+                       
+                        
+                      } 
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black87,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child:  _isloading ? const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: SizedBox(
+                                height: 20,
+                                width: 20,
+                               
+                                child: CircularProgressIndicator(color: Colors.white,),
+                              ),
+                    ):  const Text(
+                      'Submit',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

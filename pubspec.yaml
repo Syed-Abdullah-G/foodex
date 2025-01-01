@@ -68,14 +68,18 @@ dependencies:
   giffy_dialog: ^2.3.0
   sidebarx: ^0.17.1
   flutter_side_menu: ^0.5.41
+  awesome_bottom_bar: ^1.2.4
 
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/userPhoto/foodex_logo_transparent.png"
-  adaptive_icon_foreground: "assets/userPhoto/foodex_logo_transparent.png"
+  remove_alpha_ios: true
+  image_path: "assets/userPhoto/Foodex_logo.png"
+  min_sdk_android: 23
   adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/userPhoto/Foodex_logo.png"
+
 
 dev_dependencies:
   flutter_test:
@@ -112,7 +116,7 @@ flutter:
   assets:
   - assets/gif/gambar-burger-kartun-14.gif
   - assets/menu_graphic/menu.png
-  - assets/userPhoto/foodex_logo_transparent.png
+  - assets/userPhoto/Foodex_logo.png
   - assets/userPhoto/google_logo.png
   #   - images/a_dot_ham.jpeg
 

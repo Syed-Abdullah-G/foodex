@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/login.dart';
@@ -37,9 +38,49 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
     });
   }
 
+
+    void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Log Out'),
+          content: const Text('Are you sure you want to log out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Add your log out functionality here
+                _logout();
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Log Out'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+    void _logout() async {
+    // Implement your log out logic here
+    // For example, clear user data, navigate to login screen, etc.
+    await FirebaseAuth.instance.signOut();
+    print("User  logged out");
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>  const LoginScreen()));
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(resizeToAvoidBottomInset: true,
       appBar: AppBar(backgroundColor: Colors.white,
         title: Text(
           _screenTitles[_selectedIndex],
@@ -72,7 +113,7 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
           padding: EdgeInsets.zero,
           children: [
              DrawerHeader(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.black,
               ),
               child: Center(child: Image.asset("assets/menu_graphic/menu.png")),
@@ -105,6 +146,14 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
                 _onItemTapped(2);
                 // Then close the drawer
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title:  Text('Log Out',style: GoogleFonts.poppins(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 20.sp)),
+              selected: _selectedIndex == 2,
+              onTap: () {
+                // Update the state of the app
+_showLogoutDialog(context);
               },
             ),
           ],

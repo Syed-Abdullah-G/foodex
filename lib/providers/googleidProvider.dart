@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:foodex/models/razorpayOrder.dart';
 
 class GoogleIDProvider extends StateNotifier<String> {
   GoogleIDProvider() : super(''); // Initialize with an empty string or a default value

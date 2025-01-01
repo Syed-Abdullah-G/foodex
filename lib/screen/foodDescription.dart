@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:foodex/models/paymentFood.dart';
 import 'package:foodex/providers/payment_provider.dart';
-import 'package:foodex/razorpayService.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
-import 'package:intl/intl.dart';
 
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FoodDetailCard extends ConsumerStatefulWidget {
-  FoodDetailCard({required this.area, required this.account, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrl, required this.quantity, required this.userid, required this.shopprice});
+  FoodDetailCard({super.key, required this.area, required this.account, required this.shopNumber, required this.shopName, required this.shopAddress, required this.itemDescription, required this.imageUrl, required this.quantity, required this.userid, required this.shopprice, required this.shopuid});
 
   String area;
   String account; //used
@@ -22,6 +17,7 @@ class FoodDetailCard extends ConsumerStatefulWidget {
   int quantity; // used
   String userid;
   int shopprice;
+  String shopuid;
 
   @override
   ConsumerState<FoodDetailCard> createState() => _FoodDetailCardState();
@@ -49,7 +45,7 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(resizeToAvoidBottomInset: true,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
         child: Padding(
@@ -160,8 +156,8 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                       // Nutritional Info
                       Row(
                         children: [
-                          Icon(Icons.store),
-                          SizedBox(
+                          const Icon(Icons.store),
+                          const SizedBox(
                             width: 5,
                           ),
                           Text(
@@ -175,8 +171,8 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(Icons.location_on_outlined),
-                          SizedBox(
+                          const Icon(Icons.location_on_outlined),
+                          const SizedBox(
                             width: 5,
                           ),
                           Text(
@@ -203,7 +199,7 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                                     ),
                               ),
                               Text(
-                                '\₹${(totalAmount).toStringAsFixed(2)}',
+                                '₹${(totalAmount).toStringAsFixed(2)}',
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -215,7 +211,7 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                               try {
                                 // final userData = await RazorpayService().processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7","fresh and tasty","Ram Kumar", widget.shopName);
                                 final razorpayService = RazorpayService(ref, context);
-                                razorpayService.processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7", widget.shopName, widget.shopAddress, widget.shopName, quantityController, widget.itemDescription, widget.area, widget.userid, widget.shopprice, widget.shopName);
+                                razorpayService.processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7", widget.shopName, widget.shopAddress, widget.shopName, quantityController, widget.itemDescription, widget.area, widget.userid, widget.shopprice, widget.shopName, widget.shopuid);
                               } catch (e) {
                                 print("Payment initiation failed: $e");
                                 if (!context.mounted) return;

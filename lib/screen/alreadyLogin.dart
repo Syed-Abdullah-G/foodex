@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/constants/colors.dart';
 import 'package:foodex/login.dart';
 import 'package:foodex/screen/merchantNavigationscreen.dart';
-import 'package:foodex/widgets/HomeScreen.dart';
 import 'package:foodex/widgets/consumerNavigation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -58,7 +57,7 @@ class _existingLoginState extends State<existingLogin> {
   DocumentSnapshot snapshot = await accountExists.get();
 
   if (snapshot.exists) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantNavigationScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) =>  const MerchantNavigationScreen()));
   }
 
     } catch (e) {
@@ -129,7 +128,7 @@ return "";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.white,
+    return Scaffold(backgroundColor: Colors.white,resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -161,7 +160,7 @@ return "";
                     ),
                   ),
 TextButton(onPressed: (){
-Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen(),));
+Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen(),));
 }, child: Text("Create", style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
@@ -212,7 +211,7 @@ Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen()
                 width: double.infinity,
                 child: TextButton(
                   onPressed: () async {
-                    final razorpay_id = "acc_PGXA5GFiAwFfLD";
+                    const razorpayId = "acc_PGXA5GFiAwFfLD";
 
                     if (accountType == "customer") {
                      consumerlogin();
@@ -220,15 +219,15 @@ Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen()
                      merchantlogin();
                     } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Please Select Customer or Shop")),
+                          const SnackBar(content: Text("Please Select Customer or Shop")),
                         );
                     }
                   },
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(purpleColor),
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
-                      padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 14.h)),
-                      textStyle: MaterialStateProperty.all(TextStyle(
+                      backgroundColor: WidgetStateProperty.all(purpleColor),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                      padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 14.h)),
+                      textStyle: WidgetStateProperty.all(TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                       ))),
@@ -236,14 +235,14 @@ Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen()
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       isLoading
-                          ? CircularProgressIndicator(
+                          ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
                           : Image.asset("assets/userPhoto/google_logo.png"),
                       SizedBox(
                         width: 10.w,
                       ),
-                      Text("Login")
+                      const Text("Login")
                     ],
                   ),
                 ),

@@ -1,3 +1,4 @@
+import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_button_builder/custom_button_builder.dart';
@@ -8,25 +9,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/constants/colors.dart';
 import 'package:foodex/event_details.dart';
 import 'package:foodex/login.dart';
+import 'package:foodex/screen/merchantOrders.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final db = FirebaseFirestore.instance;
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({required this.shopname, required this.address, required this.shopnumber, required this.account, required this.accountType, required this.userid});
-
-  String shopname;
-  String address;
-  String shopnumber;
-  String account;
-  String accountType;
-  String userid;
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _UploadfoodState();
 }
 
 class _UploadfoodState extends State<HomeScreen> {
+  String account = "";
+  String shopnumber = "";
+  String shopname = "";
+  String address = "";
+  String accountType = "";
+  String userid = "";
+  int visit = 0;
   String areaName = "";
   List orders = [];
   List completedOrders = [];
@@ -35,6 +37,32 @@ class _UploadfoodState extends State<HomeScreen> {
   bool showCompletedOrders = false;
   Future<List>? dataFuture;
   String selectedOption = "completed";
+
+
+loadData() {
+    final docRef = db.collection("user").doc(FirebaseAuth.instance.currentUser!.email);
+    docRef.get().then(
+      (DocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        setState(() {
+          account = data["account"] ?? "";
+          shopnumber = data["shopnumber"] ?? "";
+          shopname = data["shopname"] ?? "";
+          address = data["address"] ?? "";
+          accountType = data["accountType"] ?? "";
+          userid = data["uid"] ?? "";
+          areaName = data["area"] ?? "";
+
+        });
+      
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
+  }
+
+
+
+
   Future<List> getUserData() async {
     print("started");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -42,8 +70,8 @@ class _UploadfoodState extends State<HomeScreen> {
       areaName = sharedPreferences.getString("area") ?? "";
     });
     try {
-      print(widget.userid);
-    final restaurant = await db.collection(areaName).doc(widget.userid).get();
+      print(userid);
+    final restaurant = await db.collection(areaName).doc(userid).get();
     final foodItemsSet = restaurant["fooditems"];
     setState(() {
       orders = foodItemsSet.toList();
@@ -99,7 +127,7 @@ class _UploadfoodState extends State<HomeScreen> {
     // For example, clear user data, navigate to login screen, etc.
     await FirebaseAuth.instance.signOut();
     print("User  logged out");
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
 
   }
 
@@ -107,7 +135,7 @@ class _UploadfoodState extends State<HomeScreen> {
   void _deleteFoodItem(Map<String, dynamic> itemToDelete) async {
   try {
     // Remove the specific item from the fooditems array
-    await db.collection(areaName).doc(widget.userid).update({
+    await db.collection(areaName).doc(userid).update({
       'fooditems': FieldValue.arrayRemove([itemToDelete])
     });
 
@@ -126,17 +154,20 @@ class _UploadfoodState extends State<HomeScreen> {
 
     // Optional: Show a snackbar to confirm deletion
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Item deleted successfully')),
+      const SnackBar(content: Text('Item deleted successfully')),
     );
   } catch (e) {
     print("Error deleting item: $e");
     
     // Optional: Show an error snackbar
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to delete item')),
+      const SnackBar(content: Text('Failed to delete item')),
     );
   }
 }
+
+
+
 
 
 
@@ -156,22 +187,23 @@ class _UploadfoodState extends State<HomeScreen> {
     // TODO: implement initState
     super.initState();
     dataFuture = getUserData();
+    loadData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(resizeToAvoidBottomInset: true,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print(widget.userid);
+            print(userid);
             print(areaName);
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => event_details(
-                shopname: widget.shopname,
-                account: widget.account,
-                shopnumber: widget.shopnumber,
-                address: widget.address,
-                userid: widget.userid,
+                shopname:shopname,
+                account: account,
+                shopnumber:shopnumber,
+                address: address,
+                userid: userid,
               ),
             ));
           },
@@ -181,155 +213,125 @@ class _UploadfoodState extends State<HomeScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         ),
         backgroundColor: Colors.blue[700],
-        body: Column(children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: Colors.transparent,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.storefront, color: Colors.white, size: 34),
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.accountType,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
+        body: SafeArea(
+          child: Column(children: [
+           
+            ShopCard(shopName: shopname, shopAddress: address, shopMobileNumber:shopnumber, shopArea: areaName),
+            Container(
+              color: Colors.blue[700],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _CategoryButton(
+                        text: 'Completed',
+                        isSelected: selectedOption == "completed",
+                        onPressed: () {
+                          setState(() {
+                            selectedOption = "completed";
+                            _updateOrderLists();
+                          });
+                        },
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.logout, color: Colors.white),
-                      onPressed: () {
-                        _showLogoutDialog(context);
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _CategoryButton(
+                        text: 'Pending',
+                        isSelected: selectedOption == "pending",
+                        onPressed: () {
+                          setState(() {
+                            selectedOption = "pending";
+                            _updateOrderLists();
+                  
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          ShopCard(shopName: widget.shopname, shopAddress: widget.address, shopMobileNumber: widget.shopnumber, shopArea: areaName),
-          Container(
-            color: Colors.blue[700],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _CategoryButton(
-                      text: 'Completed',
-                      isSelected: selectedOption == "completed",
-                      onPressed: () {
-                        setState(() {
-                          selectedOption = "completed";
-                          _updateOrderLists();
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _CategoryButton(
-                      text: 'Pending',
-                      isSelected: selectedOption == "pending",
-                      onPressed: () {
-                        setState(() {
-                          selectedOption = "pending";
-                          _updateOrderLists();
-                
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-              child: FutureBuilder(
-                  future: dataFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}')); // Show error message
-                    } else if (!snapshot.hasData) {
-                      return Center(child: Text('No items found.')); // Show no items message
-                    } else {
-                      return Container(
-                          padding:  EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
-                          decoration:  BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(32.r),
-                              topRight: Radius.circular(32.r),
+            Expanded(
+                child: FutureBuilder(
+                    future: dataFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}')); // Show error message
+                      } else if (!snapshot.hasData) {
+                        return const Center(child: Text('No items found.')); // Show no items message
+                      } else {
+                        return Container(
+                            padding:  EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                            decoration:  BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(32.r),
+                                topRight: Radius.circular(32.r),
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: RefreshIndicator(
-                                  onRefresh: () async {
-                                    await getUserData();
-                                  },
-                                  child: CustomScrollView(
-                                    key: const PageStorageKey<String>('food-items-scroll'),
-                                    slivers: [
-                                      SliverPadding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                        sliver: SliverList(
-                                          delegate: SliverChildBuilderDelegate(
-                                            (context, index) {
-                                              final item = completedOrders[index];
-                                              final dateofproduce = item["dateofproduce"];
-                                              final quantity = item["quantity"];
-
-                                              final price = item["shopprice"];
-                                              final shopname = item["shopname"];
-
-                                              final shopaddress = item["shopaddress"];
-                                              final shopmobile = item["shopmobile"];
-                                              final imageFileURL = item["imageFileURL"];
-                                              final itemDesc = item["itemDescription"];
-                                              final account = item["account"];
-
-                                              return FoodItemCard(
-                                                imageUrl: imageFileURL,
-                                                itemName: itemDesc,
-                                                dateOfProduce: dateofproduce,
-                                                quantity: quantity,
-                                                price: price,
-                                                onDelete: () => _deleteFoodItem(item),
-                                              );
-                                            },
-                                            childCount: completedOrders.length,
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: RefreshIndicator(
+                                    onRefresh: () async {
+                                      await getUserData();
+                                    },
+                                    child: CustomScrollView(
+                                      key: const PageStorageKey<String>('food-items-scroll'),
+                                      slivers: [
+                                        SliverPadding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                          sliver: SliverList(
+                                            delegate: SliverChildBuilderDelegate(
+                                              (context, index) {
+                                                final item = completedOrders[index];
+                                                final dateofproduce = item["dateofproduce"];
+                                                final quantity = item["quantity"];
+          
+                                                final price = item["shopprice"];
+                                                final shopname = item["shopname"];
+          
+                                                final shopaddress = item["shopaddress"];
+                                                final shopmobile = item["shopmobile"];
+                                                final imageFileURL = item["imageFileURL"];
+                                                final itemDesc = item["itemDescription"];
+                                                final account = item["account"];
+          
+                                                return FoodItemCard(
+                                                  imageUrl: imageFileURL,
+                                                  itemName: itemDesc,
+                                                  dateOfProduce: dateofproduce,
+                                                  quantity: quantity,
+                                                  price: price,
+                                                  onDelete: () => _deleteFoodItem(item),
+                                                );
+                                              },
+                                              childCount: completedOrders.length,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ));
-                    }
-                  }))
-        ]));
+                              ],
+                            ));
+                      }
+                    }))
+          ]),
+        ));
   }
 }
 
@@ -338,7 +340,7 @@ class _CategoryButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isSelected;
 
-  const _CategoryButton({Key? key, required this.text, required this.onPressed, required this.isSelected}) : super(key: key);
+  const _CategoryButton({required this.text, required this.onPressed, required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -365,7 +367,7 @@ class ShopCard extends StatelessWidget {
   final String shopMobileNumber;
   final String shopArea;
 
-  ShopCard({
+  const ShopCard({super.key, 
     required this.shopName,
     required this.shopAddress,
     required this.shopMobileNumber,
@@ -387,17 +389,17 @@ class ShopCard extends StatelessWidget {
           children: [
             Text(
               shopName,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Row(
               children: [
-                Icon(Icons.location_on, color: Colors.black54),
-                SizedBox(width: 8.0),
+                const Icon(Icons.location_on, color: Colors.black54),
+                const SizedBox(width: 8.0),
                 Expanded(
                   child: Text(
                     shopAddress,
@@ -409,11 +411,11 @@ class ShopCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Row(
               children: [
-                Icon(Icons.phone, color: Colors.black54),
-                SizedBox(width: 8.0),
+                const Icon(Icons.phone, color: Colors.black54),
+                const SizedBox(width: 8.0),
                 Text(
                   shopMobileNumber,
                   style: TextStyle(
@@ -423,11 +425,11 @@ class ShopCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Row(
               children: [
-                Icon(Icons.map, color: Colors.black54),
-                SizedBox(width: 8.0),
+                const Icon(Icons.map, color: Colors.black54),
+                const SizedBox(width: 8.0),
                 Text(
                   shopArea,
                   style: TextStyle(
@@ -453,14 +455,14 @@ class FoodItemCard extends StatelessWidget {
   final VoidCallback onDelete;
 
   const FoodItemCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.itemName,
     required this.dateOfProduce,
     required this.quantity,
     required this.price,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -518,7 +520,7 @@ class FoodItemCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Price: \₹$price',
+                      'Price: ₹$price',
                       style: TextStyle(
                         color: Colors.green[800],
                         fontWeight: FontWeight.w600,
@@ -532,8 +534,8 @@ class FoodItemCard extends StatelessWidget {
         ), 
         Align(
           alignment: Alignment.topRight,
-          child: Padding(padding: EdgeInsets.all(0),
-          child: IconButton(onPressed: onDelete, icon: Icon(Icons.delete, color: Colors.red,)),),
+          child: Padding(padding: const EdgeInsets.all(0),
+          child: IconButton(onPressed: onDelete, icon: const Icon(Icons.delete, color: Colors.red,)),),
         )]
       ),
     );

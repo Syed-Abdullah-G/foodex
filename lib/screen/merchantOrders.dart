@@ -6,21 +6,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final db = FirebaseFirestore.instance;
 final userid = FirebaseAuth.instance.currentUser!.email;
-class usersOrders extends StatefulWidget {
-  const usersOrders({super.key});
+class merchantOrders extends StatefulWidget {
+  const merchantOrders({super.key});
 
   @override
-  State<usersOrders> createState() => _usersOrdersState();
+  State<merchantOrders> createState() => _usersOrdersState();
 }
 
-class _usersOrdersState extends State<usersOrders> {
+class _usersOrdersState extends State<merchantOrders> {
 
     String selectedArea = "";
   List restaurants = [];
   final bool _loading = false; List<Map<String, dynamic>> orders = [];
 
   Future<void> loadUserData() async {
-    final docRef = db.collection("consumer").doc(userid);
+    final docRef = db.collection("user").doc(userid);
     try {
       final doc = await docRef.get();
       if (doc.exists) {

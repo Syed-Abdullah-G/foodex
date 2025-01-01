@@ -1,24 +1,11 @@
-import 'dart:ffi';
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_side_menu/flutter_side_menu.dart';
 import 'package:foodex/constants/area_names.dart';
-import 'package:foodex/constants/colors.dart';
-import 'package:foodex/getDetails.dart';
-import 'package:foodex/login.dart';
 import 'package:foodex/screen/foodDescription.dart';
-import 'package:foodex/widgets/HomeScreen.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sidebarx/sidebarx.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 final db = FirebaseFirestore.instance;
 final userid = FirebaseAuth.instance.currentUser!.email;
@@ -134,7 +121,7 @@ class _GetfoodPageState extends State<Getfood> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.white,
+    return Scaffold(backgroundColor: Colors.white,resizeToAvoidBottomInset: true,
       
         body: Padding(
       padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
@@ -146,7 +133,7 @@ class _GetfoodPageState extends State<Getfood> {
           consumerCard(consumerName: name, consumerMobile: mobile, consumerArea: area),
           SizedBox(height: 10.h,),
           CustomDropdown.search(
-              decoration: CustomDropdownDecoration(closedFillColor: Colors.black,headerStyle: TextStyle(color: Colors.white, fontSize: 15.sp),expandedFillColor: Colors.blueGrey[50], hintStyle: TextStyle(color: Colors.white),prefixIcon: Icon(Icons.location_on_outlined,color: Colors.white,)),
+              decoration: CustomDropdownDecoration(closedFillColor: Colors.black,headerStyle: TextStyle(color: Colors.white, fontSize: 15.sp),expandedFillColor: Colors.blueGrey[50], hintStyle: const TextStyle(color: Colors.white),prefixIcon: const Icon(Icons.location_on_outlined,color: Colors.white,)),
               items: Area_list,
               hintText: "Select Area*",
               excludeSelected: false,
@@ -156,14 +143,14 @@ class _GetfoodPageState extends State<Getfood> {
                 }
               }),SizedBox(height: 10.h,),
           _loading
-              ? Center(
+              ? const Center(
                   child: CircularProgressIndicator(),
                 )
               : restaurants.isNotEmpty
                   ? Expanded(
                       child: ListView.separated(
                         separatorBuilder: (BuildContext context, int index) {
-                          return SizedBox(
+                          return const SizedBox(
                             height: 10,
                           );
                         },
@@ -205,7 +192,7 @@ class _GetfoodPageState extends State<Getfood> {
                                                 account: account,
                                                 quantity: quantity,
                                                 userid: userid,
-                                                shopprice: shopprice,
+                                                shopprice: shopprice, shopuid: userid
                                               )));
                                 },
                                 child: _foodwidget(imageURL: imageFileURL, title: itemDescription, price: shopprice.toString()));
@@ -214,7 +201,7 @@ class _GetfoodPageState extends State<Getfood> {
                         },
                       ),
                     )
-                  : SizedBox()
+                  : const SizedBox()
         ],
       ),
     ));
@@ -226,7 +213,7 @@ class _foodwidget extends StatelessWidget {
   final String title;
   final String price;
 
-  _foodwidget({
+  const _foodwidget({
     required this.imageURL,
     required this.title,
     required this.price,
@@ -248,21 +235,21 @@ class _foodwidget extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: "Metropolis",
                       fontSize: 23.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
-                    '\$${price}',
+                    '\$$price',
                     style: TextStyle(fontFamily: "Metropolis", fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.green[800]),
                   ),
                 ],
@@ -281,7 +268,7 @@ class consumerCard extends StatelessWidget {
   final String consumerMobile;
   final String consumerArea;
 
-  consumerCard({
+  const consumerCard({super.key, 
     required this.consumerName,
     required this.consumerMobile,
     required this.consumerArea,
@@ -309,17 +296,17 @@ class consumerCard extends StatelessWidget {
             children: [
               Text(
                 consumerName,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Row(
                 children: [
-                  Icon(Icons.phone, color: Colors.black54),
-                  SizedBox(width: 8.0),
+                  const Icon(Icons.phone, color: Colors.black54),
+                  const SizedBox(width: 8.0),
                   Text(
                     consumerMobile,
                     style: TextStyle(
@@ -329,11 +316,11 @@ class consumerCard extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Row(
                 children: [
-                  Icon(Icons.map, color: Colors.black54),
-                  SizedBox(width: 8.0),
+                  const Icon(Icons.map, color: Colors.black54),
+                  const SizedBox(width: 8.0),
                   Text(
                     consumerArea,
                     style: TextStyle(

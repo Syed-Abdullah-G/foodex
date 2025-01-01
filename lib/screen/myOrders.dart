@@ -13,7 +13,7 @@ class FoodItem {
 class OrderDetailPage extends StatefulWidget {
   final String orderId;
 
-  OrderDetailPage({required this.orderId});
+  const OrderDetailPage({super.key, required this.orderId});
 
   @override
   _OrderDetailPageState createState() => _OrderDetailPageState();
@@ -52,7 +52,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text('Order #${widget.orderId}'),
       ),
@@ -68,7 +68,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 );
               },
             )
-          : Center(
+          : const Center(
               child: CircularProgressIndicator(),
             ),
     );

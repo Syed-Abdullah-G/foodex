@@ -27,7 +27,7 @@ class RazorpayService {
   final String _keyId = 'rzp_test_0R7MGhoYIHHFTi';
   final String _keySecret = 'VQv09stqgGyID3id7SM187WX';
 
-  Future<Map<String, dynamic>> createOrder(int amount, String Acc1, String Acc2, String Acc1_branch, String address) async {
+  Future<Map<String, dynamic>> createOrder(int amount, String Acc1, String Acc2, String acc1Branch, String address) async {
     try {
       int amountInPaise = (amount * 100);
       final Map<String, dynamic> orderData = {
@@ -38,7 +38,7 @@ class RazorpayService {
             "account": Acc1,
             "amount": (amountInPaise*0.9).toInt(),
             "currency": "INR",
-            "notes": {"branch": Acc1_branch, "name": address},
+            "notes": {"branch": acc1Branch, "name": address},
             "linked_account_notes": ["branch"],
             "on_hold": 0,
           },
@@ -57,7 +57,7 @@ class RazorpayService {
         Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json', 
-          'Authorization': 'Basic ' + base64Encode(utf8.encode('$_keyId:$_keySecret'))
+          'Authorization': 'Basic ${base64Encode(utf8.encode('$_keyId:$_keySecret'))}'
         },
         body: jsonEncode(orderData),
       );
@@ -65,7 +65,7 @@ class RazorpayService {
       if (response.statusCode == 200) {
         final orderResponse = jsonDecode(response.body);
         
-        ref.read(razorpayOrderProvider.notifier).updateOrderDetails(orderResponse,0,"","", "",0,"");
+        ref.read(razorpayOrderProvider.notifier).updateOrderDetails(orderResponse,0,"","", "",0,"","");
         
         return orderResponse;
       } else {
@@ -78,9 +78,6 @@ class RazorpayService {
   }
 
   Future<void> initiatePayment(int amount, String orderID) async {
-    if (amount == null || orderID == null) {
-      throw Exception("Amount and Order ID cannot be null");
-    }
     var options = {
       'key': 'rzp_test_0R7MGhoYIHHFTi',
       'amount': amount, // in paise
@@ -99,13 +96,13 @@ class RazorpayService {
     }
   }
 
-  Future<void> processOrder(int amount, String Acc1, String Acc2, String Acc1_branch, String address, String shopName, int quantitypurchased, String itemdescription, String area, String userID, int shopprice, String shopname) async {
+  Future<void> processOrder(int amount, String Acc1, String Acc2, String acc1Branch, String address, String shopName, int quantitypurchased, String itemdescription, String area, String userID, int shopprice, String shopname, String shopuid) async {
     try {
           final paymentData = ref.read(razorpayOrderProvider.notifier);
 
 
-      final orderResponse = await createOrder(amount, Acc1, Acc2, Acc1_branch, address);
-      paymentData.updateOrderDetails(orderResponse, quantitypurchased, itemdescription,area, userID, shopprice, shopname);
+      final orderResponse = await createOrder(amount, Acc1, Acc2, acc1Branch, address);
+      paymentData.updateOrderDetails(orderResponse, quantitypurchased, itemdescription,area, userID, shopprice, shopname, shopuid);
       await initiatePayment(orderResponse["amount"], orderResponse["id"]);
     } catch (e) {
       print('initiate payment failed: $e');
@@ -156,7 +153,13 @@ class RazorpayService {
     final orderModel  = OrdersModel(dateOfProduce: formattedDate, itemDescription: paymentData.itemDescription!, quantity: paymentData.quantitypurchased.toString(), shopname: paymentData.shopname!, totalPrice:  (paymentData.amount!/100).toString());
     Map<String, dynamic> ordersMap = orderModel.toJson();
 
+
+
     await db.collection("consumer").doc(paymentData.userid).update({
+      "orders": FieldValue.arrayUnion([ordersMap]),
+    });
+
+    await db.collection("user").doc(paymentData.shopuid).update({
       "orders": FieldValue.arrayUnion([ordersMap]),
     });
 

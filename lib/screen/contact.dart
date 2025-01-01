@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPage extends StatelessWidget {
-  const ContactUsPage({Key? key}) : super(key: key);
+  const ContactUsPage({super.key});
 
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {
@@ -12,7 +12,7 @@ class ContactUsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
      
       body: SingleChildScrollView(

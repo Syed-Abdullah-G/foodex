@@ -1,4 +1,3 @@
-import 'package:drop_down_list/drop_down_list.dart';
 
 class RazorpayOrderState {
   final String? orderId;
@@ -11,6 +10,7 @@ class RazorpayOrderState {
   final String? userid;
   final int? shopprice;
   final String? shopname;
+  final String? shopuid;
 
     RazorpayOrderState({
     this.orderId,
@@ -23,6 +23,7 @@ class RazorpayOrderState {
     this.userid,
     this.shopprice,
     this.shopname,
+    this.shopuid,
 
   });
 
@@ -38,6 +39,7 @@ RazorpayOrderState copyWith({
     String? userid,
     int? shopprice,
     String? shopname,
+    String? shopuid,
 
 }) {
    return RazorpayOrderState(
@@ -51,6 +53,7 @@ RazorpayOrderState copyWith({
       userid: userid ?? this.userid,
       shopprice: shopprice ?? this.shopprice,
       shopname: shopname ?? this.shopname,
+      shopuid: shopuid ?? this.shopuid,
     );
 }
 

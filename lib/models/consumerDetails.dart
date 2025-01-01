@@ -1,4 +1,3 @@
-import 'package:http/retry.dart';
 
 class Consumerdetails {
   Consumerdetails({
