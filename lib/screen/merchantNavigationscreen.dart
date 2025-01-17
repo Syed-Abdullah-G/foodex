@@ -33,7 +33,7 @@ class _BottomNavigationScreenState extends State<MerchantNavigationScreen> {
 
   final List<Widget> _widgetOptions = <Widget>[
 
-     HomeScreen(),
+     const HomeScreen(),
       const merchantOrders(),
       const ContactUsPage()
  
@@ -82,7 +82,6 @@ class _BottomNavigationScreenState extends State<MerchantNavigationScreen> {
     // Implement your log out logic here
     // For example, clear user data, navigate to login screen, etc.
     await FirebaseAuth.instance.signOut();
-    print("User  logged out");
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>  const LoginScreen()));
 
   }

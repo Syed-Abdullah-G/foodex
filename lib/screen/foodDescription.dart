@@ -213,7 +213,6 @@ class _FoodDetailCardState extends ConsumerState<FoodDetailCard> {
                                 final razorpayService = RazorpayService(ref, context);
                                 razorpayService.processOrder(totalAmount, widget.account, "acc_PG7uLBTqV9HqN7", widget.shopName, widget.shopAddress, widget.shopName, quantityController, widget.itemDescription, widget.area, widget.userid, widget.shopprice, widget.shopName, widget.shopuid);
                               } catch (e) {
-                                print("Payment initiation failed: $e");
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

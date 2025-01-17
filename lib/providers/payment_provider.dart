@@ -72,7 +72,6 @@ class RazorpayService {
         throw Exception('Failed to create Razorpay order: ${response.body}');
       }
     } catch (e) {
-      print('Error creating Razorpay order: $e');
       rethrow;
     }
   }
@@ -91,7 +90,6 @@ class RazorpayService {
     try {
       _razorpay.open(options);
     } catch (e) {
-      print('Payment Initiation Error: $e');
       rethrow;
     }
   }
@@ -105,7 +103,6 @@ class RazorpayService {
       paymentData.updateOrderDetails(orderResponse, quantitypurchased, itemdescription,area, userID, shopprice, shopname, shopuid);
       await initiatePayment(orderResponse["amount"], orderResponse["id"]);
     } catch (e) {
-      print('initiate payment failed: $e');
       rethrow;
     }
   }
@@ -115,16 +112,13 @@ class RazorpayService {
     final now = DateTime.now();
     final formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
         final formattedDate = formatter.format(now);
-        print("---------------------");
-    print(paymentData.area);
-    print(paymentData.userid);
+   
     final docRef = db.collection(paymentData.area!).doc(paymentData.userid!);
     final docSnapshot = await docRef.get();
 
     if (docSnapshot.exists) {
       // Get the current fooditems array
       List<dynamic> foodItems = docSnapshot.data()?['fooditems'] ?? [];
-      print("------------------------------------------_$foodItems");
 
       // Find the index of the item with matching itemDescription
       int itemIndex = foodItems.indexWhere(
@@ -179,19 +173,14 @@ class RazorpayService {
     );
 
 
-    print("Payment Success Response:");
-    print("Payment ID: ${response.paymentId}");
-    print("Order ID: ${response.orderId}");
-    print("Signature: ${response.signature}");
     
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    print('Payment Error: ${response.message}');
-    print('Error Code: ${response.code}');    
+
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    print('External Wallet: ${response.walletName}');
+   
   }
 }

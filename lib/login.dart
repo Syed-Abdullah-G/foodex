@@ -11,6 +11,7 @@ import 'package:foodex/models/userDetails.dart';
 import 'package:foodex/screen/alreadyLogin.dart';
 import 'package:foodex/screen/getShopDetails1.dart';
 import 'package:foodex/screen/merchantNavigationscreen.dart';
+import 'package:foodex/screen/testingCreateAccount.dart';
 import 'package:foodex/widgets/consumerNavigation.dart';
 import 'package:foodex/widgets/textfield.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -373,7 +374,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           //  await storeShopDetails(razorpayId, mobilenumbercontroller.text, shopnamecontroller.text, addresscontroller.text, area);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const GetShopDetails1()),
+                            MaterialPageRoute(builder: (context) =>  GetShopDetails1(phone: mobilenumbercontroller.text, shopname: shopnamecontroller.text, area: area, address: addresscontroller.text,)),
                           );
                         }
                       } else {
@@ -399,7 +400,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               )
                             : accountType != "shop"
                                 ? Image.asset("assets/userPhoto/google_logo.png")
-                                : SizedBox.shrink(),
+                                : const SizedBox.shrink(),
                         SizedBox(
                           width: 10.w,
                         ),
@@ -407,7 +408,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                ),
+                ), SizedBox(height: 20.h,), SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: ()  {
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => const testingCreateAccount(),));
+                    },
+                    style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(purpleColor),
+                        foregroundColor: WidgetStateProperty.all(Colors.white),
+                        padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 14.h)),
+                        textStyle: WidgetStateProperty.all(TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                        ))),
+                    child: const Text("Testing Login")
+                  ),
+                ), 
                 SizedBox(
                   height: 48.h,
                 ),

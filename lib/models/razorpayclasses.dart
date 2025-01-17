@@ -1,11 +1,10 @@
 class AccountCreateRequest {
-  final String email;
-  final String phone;
-  final String type;
-  final String legalBusinessName;
-  final String businessType;
-  final String contactName;
-  final Profile profile;
+  final String email; //compul
+  final String phone; //compul
+  final String type; // compul
+  final String legalBusinessName; //compul
+  final String businessType; //compul
+  final Profile profile; // compul
 
 
   AccountCreateRequest({
@@ -14,7 +13,6 @@ class AccountCreateRequest {
     required this.type,
     required this.legalBusinessName,
     required this.businessType,
-    required this.contactName,
     required this.profile,
   });
 
@@ -24,7 +22,6 @@ class AccountCreateRequest {
     'type': type,
     'legal_business_name': legalBusinessName,
     'business_type': businessType,
-    'contact_name': contactName,
     'profile': profile.toJson(),
   };
 }
@@ -62,6 +59,8 @@ class Address {
   final String street2;
   final String city;
   final String state;
+  final String postal_code;
+  final String country;
 
 
   Address({
@@ -69,6 +68,8 @@ class Address {
     required this.street2,
     required this.city,
     required this.state,
+    required this.postal_code,
+    required this.country,
 
   });
 
@@ -77,6 +78,9 @@ class Address {
     'street2': street2,
     'city': city,
     'state': state,
+    'postal_code':postal_code,
+    'country': country,
+
   };
 }
 
@@ -86,51 +90,17 @@ class Address {
 class StakeholderRequest {
   final String name;
   final String email;
-  final StakeholderAddresses addresses;
 
 
   StakeholderRequest({
     required this.name,
     required this.email,
-    required this.addresses,
 
   });
 
   Map<String, dynamic> toJson() => {
     'name': name,
     'email': email,
-    'addresses': addresses.toJson(),
-  };
-}
-
-class StakeholderAddresses {
-  final ResidentialAddress residential;
-
-  StakeholderAddresses({required this.residential});
-
-  Map<String, dynamic> toJson() => {
-    'residential': residential.toJson(),
-  };
-}
-
-class ResidentialAddress {
-  final String street;
-  final String city;
-  final String state;
-
-
-  ResidentialAddress({
-    required this.street,
-    required this.city,
-    required this.state,
-
-  });
-
-  Map<String, dynamic> toJson() => {
-    'street': street,
-    'city': city,
-    'state': state,
-
   };
 }
 

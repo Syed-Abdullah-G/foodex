@@ -46,7 +46,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         }).toList();
       });
     } catch (e) {
-      print('Error fetching food items: $e');
     }
   }
 

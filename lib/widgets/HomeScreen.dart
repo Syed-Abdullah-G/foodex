@@ -1,15 +1,12 @@
-import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_button_builder/custom_button_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/constants/colors.dart';
 import 'package:foodex/event_details.dart';
 import 'package:foodex/login.dart';
-import 'package:foodex/screen/merchantOrders.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final db = FirebaseFirestore.instance;
@@ -64,13 +61,11 @@ loadData() {
 
 
   Future<List> getUserData() async {
-    print("started");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       areaName = sharedPreferences.getString("area") ?? "";
     });
     try {
-      print(userid);
     final restaurant = await db.collection(areaName).doc(userid).get();
     final foodItemsSet = restaurant["fooditems"];
     setState(() {
@@ -80,7 +75,6 @@ loadData() {
       isLoading = false;
     });
     return orders;} catch (e) {
-      print(e);
       return [];
     }
     // [{dateofproduce: 2024-11-30, quantity: 3, price: 40, shopname: Fresh N Tasty, shopaddress: Avadi, Chennai., shopmobile: 7200054975, imageFileURL: https://firebasestorage.googleapis.com/v0/b/food-f88e3.appspot.com/o/Avadi%2FFresh%20N%20Tasty%2Fdata%2Fuser%2F0%2Fcom.testing.foodex%2Fcache%2F4c1091b3-c1ed-4c0b-9b6d-a57ecd53ce28%2F25.jpg.png?alt=media&token=bcaeab85-0a69-4dcc-9eca-99293c9cbe63, itemDescription: butter chicken, account: 5P8xfM4pr7hxV26O37iK5ZYMDM62}, {dateofproduce: 2024-11-30, quantity: 2, price: 20, shopname: Fresh N Tasty, shopaddress: Avadi, Chennai., shopmobile: 7200054975, imageFileURL: https://firebasestorage.googleapis.com/v0/b/food-f88e3.appspot.com/o/Avadi%2FFresh%20N%20Tasty%2Fdata%2Fuser%2F0%2Fcom.testing.foodex%2Fcache%2F4b5e5623-89e0-482b-8955-4d16074042db%2F20.jpg.png?alt=media&token=95f021f0-492e-4848-883e-a1047dabb881, itemDescription: biryani, account: 5P8xfM4pr7hxV26O37iK5ZYMDM62}]
@@ -126,7 +120,6 @@ loadData() {
     // Implement your log out logic here
     // For example, clear user data, navigate to login screen, etc.
     await FirebaseAuth.instance.signOut();
-    print("User  logged out");
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
 
   }
@@ -157,7 +150,6 @@ loadData() {
       const SnackBar(content: Text('Item deleted successfully')),
     );
   } catch (e) {
-    print("Error deleting item: $e");
     
     // Optional: Show an error snackbar
     ScaffoldMessenger.of(context).showSnackBar(
@@ -195,8 +187,7 @@ loadData() {
     return Scaffold(resizeToAvoidBottomInset: true,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print(userid);
-            print(areaName);
+         
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => event_details(
                 shopname:shopname,

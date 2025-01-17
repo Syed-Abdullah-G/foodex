@@ -1,71 +1,63 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodex/api/razorpayApiCall2.dart';
+import 'package:foodex/constants/area_names.dart';
 import 'package:foodex/constants/colors.dart';
-import 'package:foodex/login.dart';
 import 'package:foodex/models/userDetails.dart';
+import 'package:foodex/screen/alreadyLogin.dart';
+import 'package:foodex/screen/getShopDetails1.dart';
 import 'package:foodex/screen/merchantNavigationscreen.dart';
 import 'package:foodex/screen/userOrders.dart';
 import 'package:foodex/widgets/textfield.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
+String valueSharedPreferences = "area";
+String consumername = "consumername";
+String consumermobile = "consumermobile";
+String consumerarea = "consumerarea";
 final db = FirebaseFirestore.instance;
+final storageRef = FirebaseStorage.instance.ref();
 
-class GetShopDetails1 extends StatefulWidget {
-  GetShopDetails1({super.key, required this.phone, required this.shopname, required this.area, required this.address});
-
-  String phone;
-  String shopname;
-  String area;
-  String address;
+class testingCreateAccount extends StatefulWidget {
+  const testingCreateAccount({super.key});
 
   @override
-  State<GetShopDetails1> createState() => _GetShopDetails1State();
+  State<testingCreateAccount> createState() => _testingCreateAccountState();
 }
 
-class _GetShopDetails1State extends State<GetShopDetails1> {
+class _testingCreateAccountState extends State<testingCreateAccount> {
   final contact_name = TextEditingController();
   final account_number = TextEditingController();
   final ifsc_code = TextEditingController();
   final beneficiary_name = TextEditingController();
-  String subcategory = "";
+  final mobilenumbercontroller = TextEditingController();
+  final shopnamecontroller = TextEditingController();
+  final addresscontroller = TextEditingController();
+  final customermobilecontroller = TextEditingController();
+  final customernamecontroller = TextEditingController();
+  final customeraddresscontroller = TextEditingController();
+  String area = "";
+  bool isAreaSelected = false;
+  String accountType = "shop";
+  bool isShop = false;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   String shopType = "";
-  bool isLoading = false;
-  final email = FirebaseAuth.instance.currentUser!.email;
 
-  Future<String> storeShopDetails(String account, String shopmobilenumber, String shopname, String address, String area) async {
+  Future<void> storeShopDetails(String account, String shopmobilenumber, String shopname, String address, String area) async {
     setState(() => isLoading = true);
     try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        setState(() => isLoading = false);
-        return "";
-      }
+      print("entered shop function");
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: "test123@gmail.com", password: "test123");
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in to Firebase with the Google credential
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-
-      final userid = FirebaseAuth.instance.currentUser!.email;
-
-      DocumentReference accountExists = FirebaseFirestore.instance.collection("user").doc(userid);
-
-      DocumentSnapshot snapshot = await accountExists.get();
-
-      final userdetails = Userdetails(account: account, shopmobilenumber: shopmobilenumber, shopname: shopname, address: address, area: area, accountType: "shop", uid: userid!, email: FirebaseAuth.instance.currentUser!.email!);
+      final userdetails = Userdetails(account: account, shopmobilenumber: shopmobilenumber, shopname: shopname, address: address, area: area, accountType: accountType, uid: userid!, email: "test123@gmail.com");
       Map<String, String> userMap = userdetails.toJson();
       await db.collection("user").doc(userid).set(userMap);
       Navigator.push(context, MaterialPageRoute(builder: (context) => const MerchantNavigationScreen()));
@@ -77,7 +69,6 @@ class _GetShopDetails1State extends State<GetShopDetails1> {
       }
     }
 
-    return "";
   }
 
   Future saveUserData(String value) async {
@@ -89,8 +80,14 @@ class _GetShopDetails1State extends State<GetShopDetails1> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    contact_name.dispose();
+    mobilenumbercontroller.dispose();
+    shopnamecontroller.dispose();
+    addresscontroller.dispose();
+    emailController.dispose();
+    passwordController.dispose();
   }
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -98,16 +95,89 @@ class _GetShopDetails1State extends State<GetShopDetails1> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-          child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: SingleChildScrollView(
-          child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 100.h,
+                  height: 52.h,
+                ),
+                Text(
+                  "Sign Up to FoodEx",
+                  style: TextStyle(
+                    fontSize: 30.sp,
+                    fontWeight: FontWeight.w700,
+                    color: darkTextColor,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account? ",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: lightTextColor,
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const existingLogin(),
+                          ));
+                        },
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w700,
+                            color: purpleColor,
+                          ),
+                        ))
+                  ],
+                ),
+                SizedBox(
+                  height: 24.h,
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                CustomDropdown.search(
+                    decoration: CustomDropdownDecoration(
+                        closedFillColor: textFieldColor,
+                        hintStyle: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                        )),
+                    items: Area_list,
+                    hintText: "Select Area*",
+                    excludeSelected: false,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          area = value;
+                          isAreaSelected = true;
+                        });
+                      }
+                    }),
+                SizedBox(
+                  height: 16.h,
+                ),
+                getTextField2("Shop Name", shopnamecontroller),
+                SizedBox(
+                  height: 16.h,
+                ),
+                getTextField2("Phone Number", mobilenumbercontroller),
+                SizedBox(
+                  height: 16.h,
+                ),
+                getTextField2("Address", addresscontroller),
+                SizedBox(
+                  height: 16.h,
                 ),
                 Text(
                   "Choose Business Type",
@@ -152,21 +222,18 @@ class _GetShopDetails1State extends State<GetShopDetails1> {
                       label: Text(
                         'Bakery',
                         style: TextStyle(
-                          color: shopType == "bakery" ? Colors.white : Colors.black87,
+                          color: shopType == "bakeries" ? Colors.white : Colors.black87,
                         ),
                       ),
-                      selected: shopType == "bakery",
+                      selected: shopType == "bakeries",
                       selectedColor: purpleColor,
                       onSelected: (bool selected) {
                         setState(() {
-                          shopType = "bakery";
+                          shopType = "bakeries";
                         });
                       },
                     ),
                   ],
-                ),
-                SizedBox(
-                  height: 10.h,
                 ),
                 Text(
                   "Bank Details",
@@ -197,17 +264,14 @@ class _GetShopDetails1State extends State<GetShopDetails1> {
                         );
                       } else {
                         try {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => const Center(child: CircularProgressIndicator()),
-                          );
-
-                          final AccountID = await RazorpayHandler().initiateRazorpayProcess(email: email!, phone: widget.phone, businessName: widget.shopname, accountNumber: account_number.text, ifscCode: ifsc_code.text, beneficiaryName: beneficiary_name.text, contactName: beneficiary_name.text, area: widget.area, subcategory: shopType, address: widget.address);
+                         
+                           print("started");
+                          final AccountID = await RazorpayHandler().initiateRazorpayProcess(email: "test123@gmail.com", phone: mobilenumbercontroller.text, businessName: shopnamecontroller.text, accountNumber: account_number.text, ifscCode: ifsc_code.text, beneficiaryName: beneficiary_name.text, contactName: beneficiary_name.text, area: area, subcategory: shopType, address: addresscontroller.text);
+                          print(AccountID);
                           if (AccountID.isNotEmpty) {
-                            await saveUserData(widget.area);
+                            await saveUserData(area);
 
-                            storeShopDetails(AccountID, widget.phone, widget.shopname, widget.address, widget.area);
+                            await storeShopDetails(AccountID, mobilenumbercontroller.text, shopnamecontroller.text, addresscontroller.text, area);
                           }
                         } catch (e) {}
                       }
@@ -236,11 +300,18 @@ class _GetShopDetails1State extends State<GetShopDetails1> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 16.h,
+                ),
+                SizedBox(
+                  height: 48.h,
+                ),
+               
               ],
             ),
           ),
         ),
-      )),
+      ),
     );
   }
 }

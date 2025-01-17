@@ -71,7 +71,6 @@ class _consumerNavigationScreenState extends State<consumerNavigationScreen> {
     // Implement your log out logic here
     // For example, clear user data, navigate to login screen, etc.
     await FirebaseAuth.instance.signOut();
-    print("User  logged out");
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>  const LoginScreen()));
 
   }

@@ -103,7 +103,6 @@ class _AddExpenseScreenState extends State<event_details> {
 
 
   _createPost(File imageFile) async{
-    print(widget.userid);
 
                 // creating reference to the cloud storage
                 final reference = storage.child(areaName).child("${widget.shopname}/${imageFile.path}.png");
@@ -135,7 +134,6 @@ int wholePrice = price.round();
                 .doc(widget.userid)
                 .set({"fooditems": FieldValue.arrayUnion([foodMap])},SetOptions(merge: true));
           
-          print("completed .........");
 
           Navigator.pop(context);
   }

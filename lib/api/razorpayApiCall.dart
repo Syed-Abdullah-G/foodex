@@ -17,11 +17,13 @@ class RazorpayApiService {
 
   Future<Map<String, dynamic>> createAccount(AccountCreateRequest request) async {
     try {
+      print("create function started");
       final response = await http.post(
         Uri.parse('$baseUrl/accounts'),
         headers: _headers,
         body: jsonEncode(request.toJson()),
       );
+      print(response.body);
 
       return _handleResponse(response);
     } catch (e) {
@@ -31,12 +33,13 @@ class RazorpayApiService {
 
   Future<Map<String, dynamic>> createStakeholder(
       String accountId, StakeholderRequest request) async {
-    try {
+    try {print("stake holder started");
       final response = await http.post(
         Uri.parse('$baseUrl/accounts/$accountId/stakeholders'),
         headers: _headers,
         body: jsonEncode(request.toJson()),
       );
+      print(response.body);
 
       return _handleResponse(response);
     } catch (e) {
@@ -47,12 +50,13 @@ class RazorpayApiService {
   Future<Map<String, dynamic>> createProduct(
       String accountId, ProductRequest request) async {
     try {
+      print("create product started");
       final response = await http.post(
         Uri.parse('$baseUrl/accounts/$accountId/products'),
         headers: _headers,
         body: jsonEncode(request.toJson()),
       );
-
+      print(response.body);
       return _handleResponse(response);
     } catch (e) {
       throw _handleError(e);
@@ -62,11 +66,13 @@ class RazorpayApiService {
   Future<Map<String, dynamic>> updateProduct(
       String accountId, String productId, ProductUpdateRequest request) async {
     try {
+      print("update product started");
       final response = await http.patch(
         Uri.parse('$baseUrl/accounts/$accountId/products/$productId'),
         headers: _headers,
         body: jsonEncode(request.toJson()),
       );
+      print(response.body);
 
       return _handleResponse(response);
     } catch (e) {

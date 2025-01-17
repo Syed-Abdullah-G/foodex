@@ -32,7 +32,6 @@ class _usersOrdersState extends State<merchantOrders> {
         }
       }
     } catch (e) {
-      print("Error getting document: $e");
     }
   }
   @override
